@@ -1,0 +1,37 @@
+id: FEAT-001
+title: Habit Creation
+user_story_id: US-001
+
+description: >
+  Allows users to create a new habit and store it in the system.
+
+inputs:
+  - name: title
+    type: string
+
+  - name: schedule
+    type: enum
+    values:
+      - daily
+      - weekly
+      - custom
+
+  - name: reminder_times
+    type: list
+    item_type: time
+
+outputs:
+  - habit_created
+  - habit_added_to_list
+
+business_rules:
+  - habit title must not be empty
+  - schedule must be defined
+  - reminders are optional
+
+dependencies:
+  - FEAT-010
+
+edge_cases:
+  - duplicate habit name
+  - invalid reminder time
