@@ -8,29 +8,46 @@ class HomeScreen extends StatelessWidget {
 
   // Generate a list of dates for the current month
   List<DateTime> _generateMonthDates(DateTime date) {
-    final daysInMonth = DateTime(date.year, date.month + 1, 0).day;
+    final daysInMonth = DateTime(date.year, date.month, 0).day;
     return List.generate(daysInMonth, (i) => DateTime(date.year, date.month, i + 1));
   }
 
   // Split the month dates into weeks (7 days per week)
   List<List<DateTime>> _splitIntoWeeks(List<DateTime> monthDates, DateTime date) {
+
+
     List<List<DateTime>> weeks = [];
+
+    if(monthDates.first.weekday != 1) {
+      final PrewMonth = DateTime(date.year, date.month - 1, date.day);
+      //print("first day of the month ${monthDates.first.weekday}");
+      var daysOfMonth = _generateMonthDates(PrewMonth);
+      monthDates.insertAll(0, daysOfMonth.sublist(daysOfMonth.length  - ( monthDates.first.weekday - 1) ));
+    }
+
+
     for (var i = 0; i < monthDates.length; i += 7) {
       weeks.add(monthDates.sublist(i, i + 7 > monthDates.length ? monthDates.length : i + 7));
     }
 
-    print("last week of the month has days:${weeks.last.length} ${weeks.last.last.day}");
+
+    if(weeks.last.length >= 1 && weeks.last.length < 7) {
+      final nextMonth = DateTime(date.year, date.month + 1, date.day);
+      print("last week of the month has days:${weeks.last.length} ${weeks.last.last.day}");
+      weeks.last.addAll(_generateMonthDates(nextMonth).take(7 - weeks.last.length));
+      print("last week of the month has days:${weeks.last.length} ${weeks.last.last.day}");
+    }
 
     return weeks;
   }
 
   @override
   Widget build(BuildContext context) {
-    final today = DateTime.now();
+    final today = DateTime(2026, 3 , 0);
+    print(today.toIso8601String());
     final monthDates = _generateMonthDates(today);
     final weeks = _splitIntoWeeks(monthDates, today);
     PageController controller = PageController();
-
 
     @override
     void initState() {
