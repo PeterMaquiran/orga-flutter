@@ -1,14 +1,44 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:go_router/go_router.dart';
 
-// --- SCREEN 1: LOGIN ---
+// --- SCREEN 1: HOME WITH WEEKLY HORIZONTAL SLIDER CALENDAR ---
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
+  // Generate a list of dates for the current month
+  List<DateTime> _generateMonthDates(DateTime date) {
+    final daysInMonth = DateTime(date.year, date.month + 1, 0).day;
+    return List.generate(daysInMonth, (i) => DateTime(date.year, date.month, i + 1));
+  }
+
+  // Split the month dates into weeks (7 days per week)
+  List<List<DateTime>> _splitIntoWeeks(List<DateTime> monthDates, DateTime date) {
+    List<List<DateTime>> weeks = [];
+    for (var i = 0; i < monthDates.length; i += 7) {
+      weeks.add(monthDates.sublist(i, i + 7 > monthDates.length ? monthDates.length : i + 7));
+    }
+
+    print("last week of the month has days:${weeks.last.length} ${weeks.last.last.day}");
+
+    return weeks;
+  }
+
   @override
   Widget build(BuildContext context) {
+    final today = DateTime.now();
+    final monthDates = _generateMonthDates(today);
+    final weeks = _splitIntoWeeks(monthDates, today);
+    PageController controller = PageController();
+
+
+    @override
+    void initState() {
+      controller.addListener(() {
+        print("Current page: ${controller.page}");
+      });
+    }
+
     return Scaffold(
       body: Container(
         width: double.infinity,
@@ -21,100 +51,74 @@ class HomeScreen extends StatelessWidget {
         ),
         child: SafeArea(
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: 30.0,),
-              Text("Home")
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-// --- REUSABLE iOS 26 GLASS BUTTON WIDGET ---
-class GlassButton extends StatefulWidget {
-  final String text;
-  final IconData icon;
-  final Color color;
-  final Color textColor;
-  final VoidCallback onPressed;
-
-  const GlassButton({
-    super.key,
-    required this.text,
-    required this.icon,
-    required this.color,
-    required this.textColor,
-    required this.onPressed,
-  });
-
-  @override
-  State<GlassButton> createState() => _GlassButtonState();
-}
-
-class _GlassButtonState extends State<GlassButton> {
-  double _scale = 1.0;
-  double _opacity = 1.0;
-
-  void _handleTapDown(TapDownDetails details) {
-    HapticFeedback.lightImpact(); // Tactile feedback
-    setState(() {
-      _scale = 0.96; // Shrink effect
-      _opacity = 0.8; // Dimming effect
-    });
-  }
-
-  void _handleTapUp(TapUpDetails details) {
-    setState(() {
-      _scale = 1.0;
-      _opacity = 1.0;
-    });
-    widget.onPressed();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTapDown: _handleTapDown,
-      onTapUp: _handleTapUp,
-      onTapCancel: () => setState(() { _scale = 1.0; _opacity = 1.0; }),
-      child: AnimatedScale(
-        scale: _scale,
-        duration: const Duration(milliseconds: 100),
-        child: AnimatedOpacity(
-          opacity: _opacity,
-          duration: const Duration(milliseconds: 100),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(22),
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-              child: Container(
-                height: 64,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: widget.color,
-                  borderRadius: BorderRadius.circular(22),
-                  border: Border.all(color: Colors.white.withOpacity(0.2), width: 0.5),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(widget.icon, color: widget.textColor, size: 26),
-                    const SizedBox(width: 12),
-                    Text(
-                      widget.text,
-                      style: TextStyle(
-                        color: widget.textColor,
-                        fontSize: 17,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: -0.4,
-                      ),
-                    ),
-                  ],
+              const SizedBox(height: 30),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16),
+                child: Text(
+                  "Home",
+                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
                 ),
               ),
-            ),
+              const SizedBox(height: 20),
+
+              // --- Weekly Slider Calendar ---
+              SizedBox(
+                height: 90,
+                child: PageView.builder(
+                  itemCount: weeks.length,
+                  controller: PageController(viewportFraction: 1),
+                  itemBuilder: (context, weekIndex) {
+                    final week = weeks[weekIndex];
+
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: week.map((date) {
+                          final isToday = date.day == today.day;
+
+                          return Container(
+                            width: 50,
+                            decoration: BoxDecoration(
+                              color: isToday
+                                  ? Colors.blueAccent.withOpacity(0.3)
+                                  : Colors.white.withOpacity(0.3),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                  color: Colors.white.withOpacity(0.2), width: 0.5),
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+                                  [date.weekday % 7],
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    color: isToday ? Colors.blueAccent : Colors.black87,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  date.day.toString(),
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: isToday ? Colors.blueAccent : Colors.black87,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
           ),
         ),
       ),
