@@ -50,7 +50,7 @@ class OrgaLoginScreen extends StatelessWidget {
                       icon: Icons.apple,
                       color: Colors.black,
                       textColor: Colors.white,
-                      onPressed: () {},
+                      onPressed: () => context.go('/home'),
                     ),
                     const SizedBox(height: 16),
                     GlassButton(
@@ -58,7 +58,7 @@ class OrgaLoginScreen extends StatelessWidget {
                       icon: Icons.g_mobiledata_rounded,
                       color: Colors.white.withOpacity(0.7),
                       textColor: Colors.black87,
-                      onPressed: () {},
+                      onPressed: () => context.go('/home'),
                     ),
                     const SizedBox(height: 16),
                     GlassButton(

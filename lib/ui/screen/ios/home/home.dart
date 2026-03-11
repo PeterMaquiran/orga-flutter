@@ -22,6 +22,8 @@ class HomeScreen extends StatelessWidget {
         child: SafeArea(
           child: Column(
             children: [
+              SizedBox(height: 30.0,),
+              Text("Home")
             ],
           ),
         ),
