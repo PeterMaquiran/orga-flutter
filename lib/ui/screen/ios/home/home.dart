@@ -15,6 +15,9 @@ class HomeScreen extends StatelessWidget {
   // Split the month dates into weeks (7 days per week)
   List<List<DateTime>> _splitIntoWeeks(List<DateTime> monthDates, DateTime date) {
 
+    while (monthDates.isNotEmpty && monthDates.last.month != date.month) {
+      monthDates.removeLast();
+    }
 
     List<List<DateTime>> weeks = [];
 
@@ -33,9 +36,10 @@ class HomeScreen extends StatelessWidget {
 
     if(weeks.last.length >= 1 && weeks.last.length < 7) {
       final nextMonth = DateTime(date.year, date.month + 1, date.day);
-      print("last week of the month has days:${weeks.last.length} ${weeks.last.last.day}");
-      weeks.last.addAll(_generateMonthDates(nextMonth).take(7 - weeks.last.length));
-      print("last week of the month has days:${weeks.last.length} ${weeks.last.last.day}");
+      //print("next ${nextMonth.toIso8601String()}");
+      //print("last week of the month has days:${weeks.last.length} ${weeks.last.last.day}");
+      weeks.last.addAll(_generateMonthDates(nextMonth).take(7 - weeks.last.length ));
+      //print("last week of the month has days:${weeks.last.length} ${weeks.last.last.day}");
     }
 
     return weeks;
@@ -43,7 +47,8 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final today = DateTime(2026, 3 , 0);
+
+    final today = DateTime(2026, 5 , 0);
     print(today.toIso8601String());
     final monthDates = _generateMonthDates(today);
     final weeks = _splitIntoWeeks(monthDates, today);
@@ -71,12 +76,20 @@ class HomeScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 30),
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16),
-                child: Text(
-                  "Home",
-                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
-                ),
+              Row(
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16),
+                    child: Text(
+                      "Home",
+                      style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  Text(
+                    today.toIso8601String(),
+                    style: TextStyle(fontWeight: FontWeight.w300),
+                  )
+                ],
               ),
               const SizedBox(height: 20),
 
