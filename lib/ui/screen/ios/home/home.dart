@@ -1,5 +1,9 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 
+import '../../../shared/appbar.dart';
+import '../../../shared/navigationBar.dart';
 import 'component/habit_list.dart';
 import 'component/weekly_calendar.dart';
 
@@ -69,10 +73,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   );
                 },
                 // Pass the static parts as a child to the builder for extra optimization
-                child: const Text(
-                  "Home",
-                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
-                ),
+                child: appBar(),
               ),
 
               const Padding(
@@ -93,6 +94,8 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
       ),
+      extendBody: true, // Crucial: lets the list scroll behind the floating bar
+      bottomNavigationBar: FloatingNavBar(),
     );
   }
 }
