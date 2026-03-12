@@ -24,12 +24,12 @@ class InfiniteWeeklyCalendar extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              IconButton(
-                onPressed: () => controller.previousPage(duration: const Duration(milliseconds: 300), curve: Curves.easeInOut),
-                icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 22),
-              ),
+              // IconButton(
+              //   onPressed: () => controller.previousPage(duration: const Duration(milliseconds: 300), curve: Curves.easeInOut),
+              //   icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 22),
+              // ),
               ValueListenableBuilder<DateTime>(
                 valueListenable: focusedDate,
                 builder: (context, date, _) {
@@ -38,15 +38,15 @@ class InfiniteWeeklyCalendar extends StatelessWidget {
                   return Text("$month ${date.day}$yearStr", style: const TextStyle(fontWeight: FontWeight.w300, fontSize: 18));
                 },
               ),
-              IconButton(
-                onPressed: () => controller.nextPage(duration: const Duration(milliseconds: 300), curve: Curves.easeInOut),
-                icon: const Icon(Icons.arrow_forward_ios_rounded, size: 22),
-              ),
+              // IconButton(
+              //   onPressed: () => controller.nextPage(duration: const Duration(milliseconds: 300), curve: Curves.easeInOut),
+              //   icon: const Icon(Icons.arrow_forward_ios_rounded, size: 22),
+              // ),
             ],
           ),
         ),
         SizedBox(
-          height: 90,
+          height: 70,
           child: PageView.builder(
             controller: controller,
             onPageChanged: (i) => focusedDate.value = _getWeekForIndex(i, today).last,
