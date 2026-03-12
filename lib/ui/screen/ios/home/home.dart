@@ -17,11 +17,14 @@ class HomeScreen extends StatelessWidget {
 
     List<List<DateTime>> weeks = [];
 
-    if(monthDates.first.weekday != 1) {
+    if(monthDates.first.weekday != 1) { // add messing days on the first week
       final PrewMonth = DateTime(date.year, date.month , 0); // last day of preview month
-      //print("first day of the month ${monthDates.first.weekday} ${PrewMonth.toIso8601String()}");
       var daysOfMonth = _generateMonthDates(PrewMonth);
       monthDates.insertAll(0, daysOfMonth.sublist(daysOfMonth.length  - ( monthDates.first.weekday  + 7 -1) ));
+    } else {
+      final PrewMonth = DateTime(date.year, date.month , 0); // last day of preview month
+      var daysOfMonth = _generateMonthDates(PrewMonth);
+      monthDates.insertAll(0, daysOfMonth.sublist(daysOfMonth.length  - ( 7 ) )); // add the whole week of the last month
     }
 
     for (var i = 0; i < monthDates.length; i += 7) {
@@ -33,12 +36,10 @@ class HomeScreen extends StatelessWidget {
     var daysInLastWeekOfMonth = weeks.last.length;
 
     if(weeks.last.length >= 1 && weeks.last.length < 7) {
-      //print("next ${nextMonth.toIso8601String()}");
-      //print("last week of the month has days:${weeks.last.length} ${weeks.last.last.day}");
       weeks.last.addAll(nextMonthDays.take(7 - weeks.last.length )); // complete the week
       weeks.add(nextMonthDays.sublist((daysInLastWeekOfMonth -1), (daysInLastWeekOfMonth -1)+7)); // add first week of the month
     } else {
-      weeks.add(nextMonthDays.sublist(0, 7)); // add first week of the month
+      weeks.add(nextMonthDays.sublist(0, 7)); // add first week of the next month
     }
 
     return weeks;
@@ -48,7 +49,6 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
 
     final today = DateTime(2026, 7 , 0);
-    //print("days total: ${today.day}");
     final monthDates = _generateMonthDates(today);
     final weeks = _splitIntoWeeks(monthDates, today);
     PageController controller = PageController();
