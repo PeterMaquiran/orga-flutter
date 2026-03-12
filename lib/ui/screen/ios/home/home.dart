@@ -6,6 +6,15 @@ import 'package:flutter/services.dart';
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
+
+  String _getMonthName(int month) {
+    const months = [
+      "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+    ];
+    return months[month - 1];
+  }
+
   // Generate a list of dates for the current month
   List<DateTime> _generateMonthDates(DateTime date) {
     final daysInMonth = date.day;
@@ -62,8 +71,15 @@ class HomeScreen extends StatelessWidget {
 
     PageController controller = PageController();
     controller = PageController(initialPage: weekIndex);
+    // Notifier para o último dia da semana visível
+    final ValueNotifier<DateTime> focusedDate = ValueNotifier(weeks[weekIndex].last);
     controller.addListener(() {
       print("Current page: ${controller.page!.round() + 1} ${weeks.length}");
+      int currentPage = controller.page!.round();
+      if (currentPage >= 0 && currentPage < weeks.length) {
+        // Atualiza apenas o Notifier, sem resetar o BuildContext
+        focusedDate.value = weeks[currentPage].last;
+      }
     });
 
     return Scaffold(
@@ -105,9 +121,15 @@ class HomeScreen extends StatelessWidget {
                       Icons.arrow_back_ios_new_rounded, // Seta mais linear/moderna
                       size: 22,
                     ),
-                    Text(
-                      today.toIso8601String(),
-                      style: const TextStyle(fontWeight: FontWeight.w300),
+                    // O Widget que atualiza sozinho
+                    ValueListenableBuilder<DateTime>(
+                      valueListenable: focusedDate,
+                      builder: (context, date, _) {
+                        return Text(
+                          "${_getMonthName(date.month)} ${date.day}",
+                          style: const TextStyle(fontWeight: FontWeight.w300, fontSize: 18),
+                        );
+                      },
                     ),
                     const Icon(
                       Icons.arrow_forward_ios_rounded,
