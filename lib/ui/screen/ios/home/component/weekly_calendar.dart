@@ -22,14 +22,11 @@ class InfiniteWeeklyCalendar extends StatelessWidget {
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              // IconButton(
-              //   onPressed: () => controller.previousPage(duration: const Duration(milliseconds: 300), curve: Curves.easeInOut),
-              //   icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 22),
-              // ),
+              const SizedBox(width: 40), // space to balance the icon
               ValueListenableBuilder<DateTime>(
                 valueListenable: focusedDate,
                 builder: (context, date, _) {
@@ -38,10 +35,35 @@ class InfiniteWeeklyCalendar extends StatelessWidget {
                   return Text("$month ${date.day}$yearStr", style: const TextStyle(fontWeight: FontWeight.w300, fontSize: 18));
                 },
               ),
-              // IconButton(
-              //   onPressed: () => controller.nextPage(duration: const Duration(milliseconds: 300), curve: Curves.easeInOut),
-              //   icon: const Icon(Icons.arrow_forward_ios_rounded, size: 22),
-              // ),
+              Container(
+                width: 33,
+                height: 33,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: Colors.black.withOpacity(0.05),
+                    width: 1,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.08),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: IconButton(
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(),
+                  onPressed: () {},
+                  icon: const Icon(
+                    Icons.add,
+                    size: 23,
+                    color: Colors.black87,
+                  ),
+                ),
+              )
             ],
           ),
         ),
