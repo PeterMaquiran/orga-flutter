@@ -96,7 +96,28 @@ class HomeScreen extends StatelessWidget {
                   )
                 ],
               ),
-              const SizedBox(height: 20),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween, // Empurra os itens para as bordas
+                  children: [
+                    const Icon(
+                      Icons.arrow_back_ios_new_rounded, // Seta mais linear/moderna
+                      size: 22,
+                    ),
+                    Text(
+                      today.toIso8601String(),
+                      style: const TextStyle(fontWeight: FontWeight.w300),
+                    ),
+                    const Icon(
+                      Icons.arrow_forward_ios_rounded,
+                      size: 22,
+                    ),
+                  ],
+                ),
+              ),
+
+              //const SizedBox(height: 20),
 
               // --- Weekly Slider Calendar ---
               SizedBox(
