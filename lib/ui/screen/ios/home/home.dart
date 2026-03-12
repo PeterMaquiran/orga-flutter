@@ -117,9 +117,17 @@ class HomeScreen extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween, // Empurra os itens para as bordas
                   children: [
-                    const Icon(
-                      Icons.arrow_back_ios_new_rounded, // Seta mais linear/moderna
-                      size: 22,
+                    IconButton(
+                      onPressed: () {
+                        controller.previousPage(
+                          duration: const Duration(milliseconds: 300),
+                          curve: Curves.easeInOut,
+                        );
+                      },
+                      icon: const Icon(
+                        Icons.arrow_back_ios_new_rounded,
+                        size: 22,
+                      ),
                     ),
                     // O Widget que atualiza sozinho
                     ValueListenableBuilder<DateTime>(
@@ -131,9 +139,17 @@ class HomeScreen extends StatelessWidget {
                         );
                       },
                     ),
-                    const Icon(
-                      Icons.arrow_forward_ios_rounded,
-                      size: 22,
+                    IconButton(
+                      onPressed: () {
+                        controller.nextPage(
+                          duration: const Duration(milliseconds: 300),
+                          curve: Curves.easeInOut,
+                        );
+                      },
+                      icon: const Icon(
+                        Icons.arrow_forward_ios_rounded,
+                        size: 22,
+                      ),
                     ),
                   ],
                 ),
