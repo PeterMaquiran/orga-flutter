@@ -52,13 +52,9 @@ class HomeScreen extends StatelessWidget {
     final monthDates = _generateMonthDates(today);
     final weeks = _splitIntoWeeks(monthDates, today);
     PageController controller = PageController();
-
-    @override
-    void initState() {
-      controller.addListener(() {
-        print("Current page: ${controller.page}");
-      });
-    }
+    controller.addListener(() {
+      print("Current page: ${controller.page!.round() + 1} ${weeks.length}");
+    });
 
     return Scaffold(
       body: Container(
@@ -97,7 +93,7 @@ class HomeScreen extends StatelessWidget {
                 height: 90,
                 child: PageView.builder(
                   itemCount: weeks.length,
-                  controller: PageController(viewportFraction: 1),
+                  controller: controller,
                   itemBuilder: (context, weekIndex) {
                     final week = weeks[weekIndex];
 
