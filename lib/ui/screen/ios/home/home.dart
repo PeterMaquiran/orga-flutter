@@ -48,10 +48,20 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    final today = DateTime(2026, 7 , 0);
+    final today = DateTime.now();
     final monthDates = _generateMonthDates(today);
     final weeks = _splitIntoWeeks(monthDates, today);
+
+    int? weekIndex = weeks.indexWhere((week) =>
+        week.any((date) =>
+        date.year == DateTime.now().year &&
+            date.month == DateTime.now().month &&
+            date.day == DateTime.now().day
+        )
+    );
+
     PageController controller = PageController();
+    controller = PageController(initialPage: weekIndex);
     controller.addListener(() {
       print("Current page: ${controller.page!.round() + 1} ${weeks.length}");
     });
