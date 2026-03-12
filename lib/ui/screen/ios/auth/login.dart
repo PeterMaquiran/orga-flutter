@@ -48,7 +48,7 @@ class OrgaLoginScreen extends StatelessWidget {
                     GlassButton(
                       text: 'Sign in with Apple',
                       icon: Icons.apple,
-                      color: Colors.black,
+                      color: Color(0xFF0B0D10),
                       textColor: Colors.white,
                       onPressed: () => context.go('/home'),
                     ),
@@ -64,7 +64,7 @@ class OrgaLoginScreen extends StatelessWidget {
                     GlassButton(
                       text: 'Continue with Email',
                       icon: Icons.email_outlined,
-                      color: const Color(0xFF1B845C).withOpacity(0.85),
+                        color: const Color(0xFF19C37D).withOpacity(0.9),
                       textColor: Colors.white,
                       onPressed: () => context.go('/confirm-email'),
                     ),
