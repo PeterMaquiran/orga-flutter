@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'component/habit_list.dart';
 import 'component/weekly_calendar.dart';
 
 // --- MAIN HOME SCREEN ---
@@ -32,7 +33,7 @@ class HomeScreen extends StatelessWidget {
 
               // Add your HabitHub or Orga tasks list here
               Expanded(
-                child: Center(child: Text("Tasks go here...", style: TextStyle(color: Colors.black38))),
+                child: HabitList(),
               )
             ],
           ),
