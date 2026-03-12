@@ -33,8 +33,10 @@ class FloatingNavBar extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 _navItem(Icons.home_rounded, 0),
-                _navItem(Icons.leaderboard_rounded, 1),
-                _navItem(Icons.person_rounded, 2),
+                _navItem(Icons.calendar_today_rounded, 1),
+                //_navItem(Icons.leaderboard_rounded, 1),
+                _navItem(Icons.checklist_rounded, 2),       // Task Management
+                _navItem(Icons.insights_rounded, 3),        // Analytics/Stats
               ],
             ),
           ),
