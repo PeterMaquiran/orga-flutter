@@ -30,7 +30,7 @@ class HomeScreen extends StatelessWidget {
               SizedBox(height: 10),
               // The extracted Calendar component
               InfiniteWeeklyCalendar(),
-
+              SizedBox(height: 9,),
               // Add your HabitHub or Orga tasks list here
               Expanded(
                 child: HabitList(),
