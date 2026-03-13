@@ -1,5 +1,4 @@
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
 
 import '../../../shared/appbar.dart';
@@ -7,7 +6,6 @@ import '../../../shared/navigationBar.dart';
 import 'component/habit_list.dart';
 import 'component/weekly_calendar.dart';
 
-/// ---------------- HOME SCREEN ----------------
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -17,14 +15,16 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final ScrollController _scrollController = ScrollController();
-  // We use a ValueNotifier to track the offset without calling setState
-  final ValueNotifier<double> _scrollOffset = ValueNotifier<double>(0.0);
+  final ValueNotifier<double> _scrollOffset = ValueNotifier(0);
+
+  // Configuration Constants
+  final double _appBarHeight = 50.0;
+  final double _calendarHeight = 150.0;
 
   @override
   void initState() {
     super.initState();
     _scrollController.addListener(() {
-      // Update the notifier directly. This does NOT rebuild the whole widget.
       _scrollOffset.value = _scrollController.offset;
     });
   }
@@ -38,64 +38,106 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final safeTop = MediaQuery.of(context).padding.top;
+
     return Scaffold(
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [Color(0xFFF8F9FA), Color(0xFFE9ECEF), Color(0xFFDEE2E6)],
-          ),
-        ),
-        child: SafeArea(
-          bottom: false,
-          child: Column(
-            children: [
-              // ONLY this builder rebuilds when scrolling
-              ValueListenableBuilder<double>(
-                valueListenable: _scrollOffset,
-                builder: (context, offset, child) {
-                  final double headerHeight = (60.0 - offset).clamp(0.0, 60.0);
-                  final double opacity = (1.0 - (offset / 60.0)).clamp(0.0, 1.0);
+      // CRITICAL: extendBody allows the list to scroll behind the floating nav bar
+      extendBody: true,
 
-                  return Opacity(
-                    opacity: opacity,
-                    child: Container(
-                      height: headerHeight,
-                      width: double.infinity,
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
-                      alignment: Alignment.centerLeft,
-                      // Child is the Text widget passed below to avoid re-creating it
-                      child: headerHeight > 10 ? child : const SizedBox.shrink(),
-                    ),
-                  );
-                },
-                // Pass the static parts as a child to the builder for extra optimization
-                child: appBar(),
-              ),
-
-              Padding(
-                padding: EdgeInsets.only(left: 16, right: 16, bottom: 5),
-                child: const InfiniteWeeklyCalendar(),
-              ),
-
-              Expanded(
-                child: ListView.builder(
-                  padding: const EdgeInsets.only(bottom: 100, top: 15, right: 16, left: 16),
-                  physics: const BouncingScrollPhysics(),
-                  controller: _scrollController,
-                  itemCount: 30,
-                  itemBuilder: (context, index) => HabitCard(index: index),
+      // We keep the Stack approach to handle the background and sticky header
+      body: Stack(
+        children: [
+          /// 1. THE FIXED GRADIENT BACKGROUND
+          Positioned.fill(
+            child: Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Color(0xFFF8F9FA),
+                    Color(0xFFE9ECEF),
+                    Color(0xFFDEE2E6),
+                  ],
                 ),
               ),
-            ],
+            ),
           ),
-        ),
+
+          /// 2. THE SCROLLABLE CONTENT
+          Positioned.fill(
+            child: CustomScrollView(
+              controller: _scrollController,
+              physics: const BouncingScrollPhysics(),
+              slivers: [
+                SliverPadding(
+                  padding: EdgeInsets.only(
+                    top: safeTop + _appBarHeight + _calendarHeight + 10,
+                    bottom: 120, // Extra bottom padding so items aren't hidden by NavBar
+                    left: 16,
+                    right: 16,
+                  ),
+                  sliver: SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                          (context, index) => HabitCard(index: index,),
+                      childCount: 20,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          /// 3. THE DYNAMIC HEADER
+          ValueListenableBuilder<double>(
+            valueListenable: _scrollOffset,
+            builder: (context, offset, child) {
+              double shrinkProgress = (offset / _appBarHeight).clamp(0.0, 1.0);
+              double currentAppBarHeight = _appBarHeight * (1 - shrinkProgress);
+              double opacity = (1 - shrinkProgress).clamp(0.0, 1.0);
+
+              return Positioned(
+                top: 0,
+                left: 0,
+                right: 0,
+                child: ClipRect(
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                    child: Container(
+                      color: Colors.white.withOpacity(0.7),
+                      padding: EdgeInsets.only(top: safeTop),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Padding(padding: EdgeInsets.symmetric(horizontal: 16),
+                              child:
+                              Opacity(
+                                opacity: opacity,
+                                child: SizedBox(
+                                  height: currentAppBarHeight,
+                                  child: const Center(child: appBar()),
+                                ),
+                              )),
+                          Padding(padding: EdgeInsets.symmetric(horizontal: 16),
+                              child: SizedBox(
+                                height: _calendarHeight,
+                                child: const InfiniteWeeklyCalendar(),
+                              )),
+
+                          const Divider(height: 1, color: Colors.black12),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
       ),
-      extendBody: true, // Crucial: lets the list scroll behind the floating bar
-      bottomNavigationBar: FloatingNavBar(),
+
+      /// 4. THE FLOATING NAVIGATION BAR
+      bottomNavigationBar: const FloatingNavBar(),
     );
   }
 }
