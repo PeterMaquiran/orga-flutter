@@ -18,8 +18,8 @@ class _HomeScreenState extends State<HomeScreen> {
   final ValueNotifier<double> _scrollOffset = ValueNotifier(0);
 
   // Configuration Constants
-  final double _appBarHeight = 50.0;
-  final double _calendarHeight = 150.0;
+  final double _appBarHeight = 60.0;
+  final double _calendarHeight = 130.0;
 
   @override
   void initState() {
@@ -88,6 +88,8 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
 
+
+
           /// 3. THE DYNAMIC HEADER
           ValueListenableBuilder<double>(
             valueListenable: _scrollOffset,
@@ -115,7 +117,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                 opacity: opacity,
                                 child: SizedBox(
                                   height: currentAppBarHeight,
-                                  child: const Center(child: appBar()),
+                                  child: Padding(padding: EdgeInsets.only(bottom: 14),
+                                    child: const Center(child: appBar())
+                                    ,),
                                 ),
                               )),
                           Padding(padding: EdgeInsets.symmetric(horizontal: 16),
