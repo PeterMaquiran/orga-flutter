@@ -65,7 +65,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: Container(
                       height: headerHeight,
                       width: double.infinity,
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
                       alignment: Alignment.centerLeft,
                       // Child is the Text widget passed below to avoid re-creating it
                       child: headerHeight > 10 ? child : const SizedBox.shrink(),
@@ -76,14 +76,14 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: appBar(),
               ),
 
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16),
-                child: InfiniteWeeklyCalendar(),
+              Padding(
+                padding: EdgeInsets.only(left: 16, right: 16, bottom: 5),
+                child: const InfiniteWeeklyCalendar(),
               ),
 
               Expanded(
                 child: ListView.builder(
-                  padding: const EdgeInsets.only(bottom: 20, top: 20, right: 16, left: 16),
+                  padding: const EdgeInsets.only(bottom: 100, top: 15, right: 16, left: 16),
                   physics: const BouncingScrollPhysics(),
                   controller: _scrollController,
                   itemCount: 30,
