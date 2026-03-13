@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import '../../../../shared/theme/appColors.dart';
 
-// --- EXTRACTED CALENDAR COMPONENT ---
 class InfiniteWeeklyCalendar extends StatelessWidget {
   const InfiniteWeeklyCalendar({super.key});
 
@@ -22,7 +22,7 @@ class InfiniteWeeklyCalendar extends StatelessWidget {
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 13),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -36,8 +36,8 @@ class InfiniteWeeklyCalendar extends StatelessWidget {
                 },
               ),
               Container(
-                width: 33,
-                height: 33,
+                width: 40,
+                height: 40,
                 decoration: BoxDecoration(
                   color: Colors.white,
                   shape: BoxShape.circle,
@@ -60,7 +60,7 @@ class InfiniteWeeklyCalendar extends StatelessWidget {
                   icon: const Icon(
                     Icons.add,
                     size: 23,
-                    color: Colors.black87,
+                    color: Colors.blueGrey,
                   ),
                 ),
               )
@@ -75,7 +75,7 @@ class InfiniteWeeklyCalendar extends StatelessWidget {
             itemBuilder: (context, index) {
               final week = _getWeekForIndex(index, today);
               return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
+                padding: const EdgeInsets.symmetric(horizontal: 0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: week.map((date) {
@@ -95,18 +95,18 @@ class InfiniteWeeklyCalendar extends StatelessWidget {
     return Container(
       width: 48,
       decoration: BoxDecoration(
-        color: isToday ? Colors.blueAccent.withOpacity(0.2) : Colors.white.withOpacity(0.4),
+        color: isToday ? AppColors.tertiary.withOpacity(0.05) : Colors.white.withOpacity(0.4),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: isToday ? Colors.blueAccent.withOpacity(0.3) : Colors.white.withOpacity(0.2), width: 0.5),
+        border: Border.all(color: isToday ? AppColors.secondary.withOpacity(0.1) : Colors.white.withOpacity(0.2), width: 0.5),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][date.weekday % 7],
-              style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: isToday ? Colors.blueAccent : Colors.black54)),
+              style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: isToday ? AppColors.tertiary : Colors.black54)),
           const SizedBox(height: 4),
           Text(date.day.toString(),
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: isToday ? Colors.blueAccent : Colors.black87)),
+              style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: isToday ? AppColors.tertiary : AppColors.background.withOpacity(0.3))),
         ],
       ),
     );
