@@ -10,7 +10,7 @@ class appBar extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         const Text(
-          "Home",
+          "Habit",
           style: TextStyle(
             fontSize: 28,
             fontWeight: FontWeight.bold,
@@ -22,8 +22,8 @@ class appBar extends StatelessWidget {
             // Profile action
           },
           child: Container(
-            width: 35,
-            height: 35,
+            width: 40,
+            height: 40,
             decoration: BoxDecoration(
               color: Colors.grey[300], // Soft gray background
               shape: BoxShape.circle,
@@ -31,7 +31,7 @@ class appBar extends StatelessWidget {
             ),
             child: const Icon(
               Icons.person,
-              size: 22,
+              size: 30,
               color: Colors.white, // White icon on gray looks very iOS
             ),
           ),
