@@ -22,7 +22,7 @@ class InfiniteWeeklyCalendar extends StatelessWidget {
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 13),
+          padding: const EdgeInsets.only(bottom: 5),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -36,8 +36,8 @@ class InfiniteWeeklyCalendar extends StatelessWidget {
                 },
               ),
               Container(
-                width: 40,
-                height: 40,
+                width: 44,
+                height: 44,
                 decoration: BoxDecoration(
                   color: Colors.white,
                   shape: BoxShape.circle,
