@@ -6,7 +6,7 @@ class FloatingNavBar extends StatelessWidget {
   const FloatingNavBar({
     super.key,
   });
-  final int currentIndex = 1;
+  final int currentIndex = 0;
 
 
   @override
@@ -36,7 +36,7 @@ class FloatingNavBar extends StatelessWidget {
                 _navItem(Icons.calendar_today_rounded, 1),
                 //_navItem(Icons.leaderboard_rounded, 1),
                 _navItem(Icons.checklist_rounded, 2),       // Task Management
-                _navItem(Icons.insights_rounded, 3),        // Analytics/Stats
+                //_navItem(Icons.insights_rounded, 3),        // Analytics/Stats
               ],
             ),
           ),
