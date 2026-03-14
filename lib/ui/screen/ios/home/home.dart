@@ -1,152 +1,147 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
-// --- SCREEN 1: HOME WITH WEEKLY HORIZONTAL SLIDER CALENDAR ---
-class HomeScreen extends StatelessWidget {
+import '../../../shared/appbar.dart';
+import '../../../shared/navigationBar.dart';
+import 'component/habit_list.dart';
+import 'component/weekly_calendar.dart';
+
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
-  // Generate a list of dates for the current month
-  List<DateTime> _generateMonthDates(DateTime date) {
-    final daysInMonth = date.day;
-    return List.generate(daysInMonth, (i) => DateTime(date.year, date.month, i + 1));
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  final ScrollController _scrollController = ScrollController();
+  final ValueNotifier<double> _scrollOffset = ValueNotifier(0);
+
+  // Configuration Constants
+  final double _appBarHeight = 60.0;
+  final double _calendarHeight = 130.0;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(() {
+      _scrollOffset.value = _scrollController.offset;
+    });
   }
 
-  // Split the month dates into weeks (7 days per week)
-  List<List<DateTime>> _splitIntoWeeks(List<DateTime> monthDates, DateTime date) {
-
-    List<List<DateTime>> weeks = [];
-
-    if(monthDates.first.weekday != 1) {
-      final PrewMonth = DateTime(date.year, date.month , 0); // last day of preview month
-      //print("first day of the month ${monthDates.first.weekday} ${PrewMonth.toIso8601String()}");
-      var daysOfMonth = _generateMonthDates(PrewMonth);
-      monthDates.insertAll(0, daysOfMonth.sublist(daysOfMonth.length  - ( monthDates.first.weekday  + 7 -1) ));
-    }
-
-    for (var i = 0; i < monthDates.length; i += 7) {
-      weeks.add(monthDates.sublist(i, i + 7 > monthDates.length ? monthDates.length : i + 7));
-    }
-
-    final nextMonth = DateTime(date.year, date.month+2, 0);
-    var nextMonthDays =_generateMonthDates(nextMonth);
-    var daysInLastWeekOfMonth = weeks.last.length;
-
-    if(weeks.last.length >= 1 && weeks.last.length < 7) {
-      //print("next ${nextMonth.toIso8601String()}");
-      //print("last week of the month has days:${weeks.last.length} ${weeks.last.last.day}");
-      weeks.last.addAll(nextMonthDays.take(7 - weeks.last.length )); // complete the week
-      weeks.add(nextMonthDays.sublist((daysInLastWeekOfMonth -1), (daysInLastWeekOfMonth -1)+7)); // add first week of the month
-    } else {
-      weeks.add(nextMonthDays.sublist(0, 7)); // add first week of the month
-    }
-
-    return weeks;
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    _scrollOffset.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-
-    final today = DateTime(2026, 7 , 0);
-    //print("days total: ${today.day}");
-    final monthDates = _generateMonthDates(today);
-    final weeks = _splitIntoWeeks(monthDates, today);
-    PageController controller = PageController();
-    controller.addListener(() {
-      print("Current page: ${controller.page!.round() + 1} ${weeks.length}");
-    });
+    final safeTop = MediaQuery.of(context).padding.top;
 
     return Scaffold(
-      body: Container(
-        width: double.infinity,
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [Color(0xFFF8F9FA), Color(0xFFE9ECEF), Color(0xFFDEE2E6)],
-          ),
-        ),
-        child: SafeArea(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 30),
-              Row(
-                children: [
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16),
-                    child: Text(
-                      "Home",
-                      style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  Text(
-                    today.toIso8601String(),
-                    style: TextStyle(fontWeight: FontWeight.w300),
-                  )
-                ],
-              ),
-              const SizedBox(height: 20),
+      // CRITICAL: extendBody allows the list to scroll behind the floating nav bar
+      extendBody: true,
 
-              // --- Weekly Slider Calendar ---
-              SizedBox(
-                height: 90,
-                child: PageView.builder(
-                  itemCount: weeks.length,
-                  controller: controller,
-                  itemBuilder: (context, weekIndex) {
-                    final week = weeks[weekIndex];
-
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: week.map((date) {
-                          final isToday = date.day == today.day;
-
-                          return Container(
-                            width: 50,
-                            decoration: BoxDecoration(
-                              color: isToday
-                                  ? Colors.blueAccent.withOpacity(0.3)
-                                  : Colors.white.withOpacity(0.3),
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(
-                                  color: Colors.white.withOpacity(0.2), width: 0.5),
-                            ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
-                                  [date.weekday % 7],
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w600,
-                                    color: isToday ? Colors.blueAccent : Colors.black87,
-                                  ),
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  date.day.toString(),
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    color: isToday ? Colors.blueAccent : Colors.black87,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          );
-                        }).toList(),
-                      ),
-                    );
-                  },
+      // We keep the Stack approach to handle the background and sticky header
+      body: Stack(
+        children: [
+          /// 1. THE FIXED GRADIENT BACKGROUND
+          Positioned.fill(
+            child: Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Color(0xFFF8F9FA),
+                    Color(0xFFE9ECEF),
+                    Color(0xFFDEE2E6),
+                  ],
                 ),
               ),
-            ],
+            ),
           ),
-        ),
+
+          /// 2. THE SCROLLABLE CONTENT
+          Positioned.fill(
+            child: CustomScrollView(
+              controller: _scrollController,
+              physics: const BouncingScrollPhysics(),
+              slivers: [
+                SliverPadding(
+                  padding: EdgeInsets.only(
+                    top: safeTop + _appBarHeight + _calendarHeight + 10,
+                    bottom: 120, // Extra bottom padding so items aren't hidden by NavBar
+                    left: 16,
+                    right: 16,
+                  ),
+                  sliver: SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                          (context, index) => HabitCard(index: index,),
+                      childCount: 20,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+
+
+          /// 3. THE DYNAMIC HEADER
+          ValueListenableBuilder<double>(
+            valueListenable: _scrollOffset,
+            builder: (context, offset, child) {
+              double shrinkProgress = (offset / _appBarHeight).clamp(0.0, 1.0);
+              double currentAppBarHeight = _appBarHeight * (1 - shrinkProgress);
+              double opacity = (1 - shrinkProgress).clamp(0.0, 1.0);
+
+              return Positioned(
+                top: 0,
+                left: 0,
+                right: 0,
+                child: ClipRect(
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                    child: Container(
+                      color: Colors.white.withOpacity(0.7),
+                      padding: EdgeInsets.only(top: safeTop),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Padding(padding: EdgeInsets.symmetric(horizontal: 16),
+                              child:
+                              Opacity(
+                                opacity: opacity,
+                                child: SizedBox(
+                                  height: currentAppBarHeight,
+                                  child: Padding(padding: EdgeInsets.only(bottom: 14),
+                                    child: const Center(child: appBar())
+                                    ,),
+                                ),
+                              )),
+                          Padding(padding: EdgeInsets.symmetric(horizontal: 16),
+                              child: SizedBox(
+                                height: _calendarHeight,
+                                child: const InfiniteWeeklyCalendar(),
+                              )),
+
+                          const Divider(height: 1, color: Colors.black12),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
       ),
+
+      /// 4. THE FLOATING NAVIGATION BAR
+      bottomNavigationBar: const FloatingNavBar(),
     );
   }
 }
