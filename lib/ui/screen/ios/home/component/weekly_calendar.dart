@@ -26,13 +26,41 @@ class InfiniteWeeklyCalendar extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const SizedBox(width: 40), // space to balance the icon
+              Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: Colors.black.withOpacity(0.05),
+                    width: 1,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.08),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: IconButton(
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(),
+                  onPressed: () {},
+                  icon: const Icon(
+                    Icons.bar_chart_rounded,
+                    size: 23,
+                    color: Colors.blueGrey,
+                  ),
+                ),
+              ),
               ValueListenableBuilder<DateTime>(
                 valueListenable: focusedDate,
                 builder: (context, date, _) {
                   final String yearStr = date.year != today.year ? ", ${date.year}" : "";
                   final String month = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][date.month - 1];
-                  return Text("$month ${date.day}$yearStr", style: const TextStyle(fontWeight: FontWeight.w300, fontSize: 18));
+                  return Text("$month ${date.day}$yearStr", style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 18));
                 },
               ),
               Container(
@@ -95,9 +123,9 @@ class InfiniteWeeklyCalendar extends StatelessWidget {
     return Container(
       width: 48,
       decoration: BoxDecoration(
-        color: isToday ? AppColors.tertiary.withOpacity(0.05) : Colors.white.withOpacity(0.4),
+        color: isToday ? AppColors.tertiary.withOpacity(0.03) : Colors.white.withOpacity(0.4),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: isToday ? AppColors.secondary.withOpacity(0.1) : Colors.white.withOpacity(0.2), width: 0.5),
+        //border: Border.all(color: isToday ? AppColors.secondary.withOpacity(0.1) : Colors.white.withOpacity(0.2), width: 0.5),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
