@@ -1,16 +1,33 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class FloatingNavBar extends StatelessWidget {
+  const FloatingNavBar({super.key});
 
-  const FloatingNavBar({
-    super.key,
-  });
-  final int currentIndex = 0;
+  int _currentIndex(BuildContext context) {
+    final path = GoRouterState.of(context).uri.path;
+    if (path == '/calendar') return 1;
+    if (path == '/home') return 0;
+    return 0;
+  }
 
+  void _onTap(BuildContext context, int index) {
+    switch (index) {
+      case 0:
+        context.go('/home');
+        return;
+      case 1:
+        context.go('/calendar');
+        return;
+      case 2:
+        return;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    final currentIndex = _currentIndex(context);
     return Padding(
       // Padding pushes the bar away from the edges to make it "float"
       padding: const EdgeInsets.fromLTRB(50, 0, 50, 30),
@@ -32,10 +49,10 @@ class FloatingNavBar extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                _navItem(Icons.home_rounded, 0),
-                _navItem(Icons.calendar_today_rounded, 1),
+                _navItem(context, currentIndex, Icons.home_rounded, 0),
+                _navItem(context, currentIndex, Icons.calendar_today_rounded, 1),
                 //_navItem(Icons.leaderboard_rounded, 1),
-                _navItem(Icons.checklist_rounded, 2),       // Task Management
+                _navItem(context, currentIndex, Icons.checklist_rounded, 2), // Task Management
                 //_navItem(Icons.insights_rounded, 3),        // Analytics/Stats
               ],
             ),
@@ -45,10 +62,15 @@ class FloatingNavBar extends StatelessWidget {
     );
   }
 
-  Widget _navItem(IconData icon, int index) {
+  Widget _navItem(
+    BuildContext context,
+    int currentIndex,
+    IconData icon,
+    int index,
+  ) {
     final bool isSelected = currentIndex == index;
     return GestureDetector(
-      onTap: () => {},
+      onTap: () => _onTap(context, index),
       behavior: HitTestBehavior.opaque,
       child: Column(
         mainAxisSize: MainAxisSize.min,

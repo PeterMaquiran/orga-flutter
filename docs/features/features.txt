@@ -1,0 +1,415 @@
+features:
+
+# ---------------------------
+# AUTHENTICATION
+# ---------------------------
+
+- id: AUTH-001
+  name: Login with Google
+
+- id: AUTH-002
+  name: Login with Apple
+
+- id: AUTH-003
+  name: Email login
+
+- id: AUTH-004
+  name: Logout
+
+- id: AUTH-005
+  name: Session persistence
+
+- id: AUTH-006
+  name: Refresh token
+
+- id: AUTH-007
+  name: Account deletion
+
+- id: AUTH-008
+  name: Multi-device login
+
+# ---------------------------
+# USER PROFILE
+# ---------------------------
+
+- id: USER-001
+  name: Create user profile
+
+- id: USER-002
+  name: Edit profile
+
+- id: USER-003
+  name: Upload avatar
+
+- id: USER-004
+  name: Public profile page
+
+- id: USER-005
+  name: Profile visibility settings
+
+- id: USER-006
+  name: Username
+
+- id: USER-007
+  name: Bio
+
+- id: USER-008
+  name: Timezone settings
+
+- id: USER-009
+  name: Language settings
+
+- id: USER-010
+  name: Dark mode
+
+# ---------------------------
+# HABIT MANAGEMENT
+# ---------------------------
+
+- id: HABIT-001
+  name: Create habit
+
+- id: HABIT-002
+  name: Edit habit
+
+- id: HABIT-003
+  name: Delete habit
+
+- id: HABIT-004
+  name: Archive habit
+
+- id: HABIT-005
+  name: Mark habit completed
+
+- id: HABIT-006
+  name: Habit schedule daily
+
+- id: HABIT-007
+  name: Habit schedule weekly
+
+- id: HABIT-008
+  name: Habit custom schedule
+
+- id: HABIT-009
+  name: Habit notes
+
+- id: HABIT-010
+  name: Habit category
+
+- id: HABIT-011
+  name: Habit color
+
+- id: HABIT-012
+  name: Habit icon
+
+- id: HABIT-013
+  name: Habit streak
+
+- id: HABIT-014
+  name: Habit history
+
+- id: HABIT-015
+  name: Habit difficulty level
+
+- id: HABIT-016
+  name: Habit tags
+
+- id: HABIT-017
+  name: Habit pause
+
+- id: HABIT-018
+  name: Habit resume
+
+- id: HABIT-019
+  name: Habit visibility private
+
+- id: HABIT-020
+  name: Habit visibility shared
+
+# ---------------------------
+# TASK MANAGEMENT
+# ---------------------------
+
+- id: TASK-001
+  name: Create task
+
+- id: TASK-002
+  name: Edit task
+
+- id: TASK-003
+  name: Delete task
+
+- id: TASK-004
+  name: Complete task
+
+- id: TASK-005
+  name: Task due date
+
+- id: TASK-006
+  name: Task notes
+
+- id: TASK-007
+  name: Task priority
+
+- id: TASK-008
+  name: Task repeat
+
+- id: TASK-009
+  name: Task tags
+
+- id: TASK-010
+  name: Task attachments
+
+- id: TASK-011
+  name: Task checklist
+
+- id: TASK-012
+  name: Task subtasks
+
+- id: TASK-013
+  name: Task assign user
+
+- id: TASK-014
+  name: Task progress status
+
+# ---------------------------
+# CALENDAR
+# ---------------------------
+
+- id: CAL-001
+  name: Calendar daily view
+
+- id: CAL-002
+  name: Calendar weekly view
+
+- id: CAL-003
+  name: Calendar monthly view
+
+- id: CAL-004
+  name: Calendar navigation
+
+- id: CAL-005
+  name: Show habits in calendar
+
+- id: CAL-006
+  name: Show tasks in calendar
+
+- id: CAL-007
+  name: Calendar drag events
+
+- id: CAL-008
+  name: Calendar filters
+
+- id: CAL-009
+  name: Calendar search
+
+- id: CAL-010
+  name: Calendar event preview
+
+# ---------------------------
+# SHARING
+# ---------------------------
+
+- id: SHARE-001
+  name: Share habit
+
+- id: SHARE-002
+  name: Share task
+
+- id: SHARE-003
+  name: Share calendar
+
+- id: SHARE-004
+  name: Invite user
+
+- id: SHARE-005
+  name: Accept invite
+
+- id: SHARE-006
+  name: Decline invite
+
+- id: SHARE-007
+  name: Generate share link
+
+- id: SHARE-008
+  name: Revoke access
+
+- id: SHARE-009
+  name: Public calendar link
+
+- id: SHARE-010
+  name: Private invite link
+
+# ---------------------------
+# PERMISSIONS
+# ---------------------------
+
+- id: PERM-001
+  name: View permission
+
+- id: PERM-002
+  name: Comment permission
+
+- id: PERM-003
+  name: Edit permission
+
+- id: PERM-004
+  name: Owner permission
+
+- id: PERM-005
+  name: Permission management
+
+# ---------------------------
+# SOCIAL ACCOUNTABILITY
+# ---------------------------
+
+- id: SOCIAL-001
+  name: Follow habit
+
+- id: SOCIAL-002
+  name: Habit followers list
+
+- id: SOCIAL-003
+  name: Habit encouragement
+
+- id: SOCIAL-004
+  name: Habit comments
+
+- id: SOCIAL-005
+  name: Habit reactions
+
+- id: SOCIAL-006
+  name: Accountability partner
+
+- id: SOCIAL-007
+  name: Habit enforcement mode
+
+- id: SOCIAL-008
+  name: Activity feed
+
+- id: SOCIAL-009
+  name: Task collaboration
+
+- id: SOCIAL-010
+  name: Comment on task
+
+# ---------------------------
+# REMINDERS
+# ---------------------------
+
+- id: REM-001
+  name: Habit reminder
+
+- id: REM-002
+  name: Task reminder
+
+- id: REM-003
+  name: Missed habit alert
+
+- id: REM-004
+  name: Daily reminder summary
+
+- id: REM-005
+  name: Friend reminder
+
+# ---------------------------
+# NOTIFICATIONS
+# ---------------------------
+
+- id: NOTIF-001
+  name: Push notification
+
+- id: NOTIF-002
+  name: In-app notification
+
+- id: NOTIF-003
+  name: Email notification
+
+- id: NOTIF-004
+  name: Notification preferences
+
+# ---------------------------
+# STATISTICS
+# ---------------------------
+
+- id: STATS-001
+  name: Habit completion stats
+
+- id: STATS-002
+  name: Habit streak stats
+
+- id: STATS-003
+  name: Weekly report
+
+- id: STATS-004
+  name: Monthly report
+
+- id: STATS-005
+  name: Habit success rate
+
+- id: STATS-006
+  name: Habit progress charts
+
+# ---------------------------
+# SEARCH
+# ---------------------------
+
+- id: SEARCH-001
+  name: Search habits
+
+- id: SEARCH-002
+  name: Search tasks
+
+- id: SEARCH-003
+  name: Search users
+
+# ---------------------------
+# DATA SYNC
+# ---------------------------
+
+- id: SYNC-001
+  name: Cloud sync
+
+- id: SYNC-002
+  name: Offline mode
+
+- id: SYNC-003
+  name: Sync conflict resolution
+
+- id: SYNC-004
+  name: Background sync
+
+# ---------------------------
+# IMPORT / EXPORT
+# ---------------------------
+
+- id: DATA-001
+  name: Export data
+
+- id: DATA-002
+  name: Import data
+
+- id: DATA-003
+  name: Backup user data
+
+- id: DATA-004
+  name: Restore backup
+
+# ---------------------------
+# AI FEATURES (FUTURE)
+# ---------------------------
+
+- id: AI-001
+  name: AI habit suggestions
+
+- id: AI-002
+  name: AI productivity tips
+
+- id: AI-003
+  name: AI habit analysis
+
+- id: AI-004
+  name: AI habit planning
+
+
+I want to create folder and file for each one of theme from my eternal bash

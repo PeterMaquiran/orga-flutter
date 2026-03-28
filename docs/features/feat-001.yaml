@@ -1,0 +1,15 @@
+title: Habit Reminders
+description: Send notifications to users at scheduled habit times
+user_story_id: us-001
+inputs:
+  - habit_id
+  - reminder_time
+outputs:
+  - notification_triggered
+business_rules:
+  - skip if user disables reminders
+  - queue if offline
+ui_reference: screens/habit_reminder.yaml
+edge_cases:
+  - time_zone_changes
+  - duplicate_reminders

@@ -1,0 +1,16 @@
+screen: habit_list
+
+components:
+  - type: list
+    source: habits
+
+  - type: habit_card
+    elements:
+      - icon
+      - title
+      - streak
+
+interactions:
+  - tap_habit:
+      action: navigate_to_habit_detail
+      feature_id: FEAT-002

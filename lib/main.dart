@@ -1,8 +1,8 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:orga/ui/screen/ios/auth/email_confirmation.dart';
 import 'package:orga/ui/screen/ios/auth/login.dart';
+import 'package:orga/ui/screen/ios/calendar/calendar_screen.dart';
 import 'package:orga/ui/screen/ios/home/home.dart';
 import 'package:orga/ui/shared/theme/appColors.dart';
 
@@ -21,6 +21,10 @@ final GoRouter _router = GoRouter(
     GoRoute(
       path: '/home',
       builder: (context, state) => const HomeScreen(),
+    ),
+    GoRoute(
+      path: '/calendar',
+      builder: (context, state) => const CalendarScreen(),
     ),
   ],
 );

@@ -64,11 +64,10 @@ class InfiniteWeeklyCalendar extends StatelessWidget {
                 },
               ),
               Container(
-                width: 44,
-                height: 44,
+                width: 100,
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  shape: BoxShape.circle,
+                  borderRadius: BorderRadius.circular(22), // half of height = fully rounded ends
                   border: Border.all(
                     color: Colors.black.withOpacity(0.05),
                     width: 1,
@@ -81,17 +80,41 @@ class InfiniteWeeklyCalendar extends StatelessWidget {
                     ),
                   ],
                 ),
-                child: IconButton(
-                  padding: EdgeInsets.zero,
-                  constraints: const BoxConstraints(),
-                  onPressed: () {},
-                  icon: const Icon(
-                    Icons.add,
-                    size: 23,
-                    color: Colors.blueGrey,
-                  ),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 44,
+                      height: 44,
+                      child: IconButton(
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(),
+                        onPressed: () {},
+                        icon: const Icon(
+                          Icons.add,
+                          size: 23,
+                          color: Colors.blueGrey,
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 10,),
+                    Container(
+                      width: 44,
+                      height: 44,
+                      child: IconButton(
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(),
+                        onPressed: () {},
+                        icon: const Icon(
+                          Icons.settings_accessibility_rounded,
+                          size: 23,
+                          color: Colors.blueGrey,
+                        ),
+                      ),
+                    )
+                  ],
                 ),
-              )
+              ),
+
             ],
           ),
         ),

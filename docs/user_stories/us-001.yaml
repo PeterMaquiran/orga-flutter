@@ -1,0 +1,9 @@
+title: Habit reminders for daily routines
+description: |
+  As a busy professional,
+  I want to receive reminders for my habits
+  so that I can maintain my daily routine without forgetting.
+acceptance_criteria:
+  - notification triggers at scheduled time
+  - user can snooze or dismiss notifications
+priority: high
