@@ -8,6 +8,7 @@ class FloatingNavBar extends StatelessWidget {
   int _currentIndex(BuildContext context) {
     final path = GoRouterState.of(context).uri.path;
     if (path == '/calendar') return 1;
+    if (path == '/boards') return 2;
     if (path == '/home') return 0;
     return 0;
   }
@@ -21,6 +22,7 @@ class FloatingNavBar extends StatelessWidget {
         context.go('/calendar');
         return;
       case 2:
+        context.go('/boards');
         return;
     }
   }
@@ -52,7 +54,7 @@ class FloatingNavBar extends StatelessWidget {
                 _navItem(context, currentIndex, Icons.home_rounded, 0),
                 _navItem(context, currentIndex, Icons.calendar_today_rounded, 1),
                 //_navItem(Icons.leaderboard_rounded, 1),
-                _navItem(context, currentIndex, Icons.checklist_rounded, 2), // Task Management
+                _navItem(context, currentIndex, Icons.view_kanban_rounded, 2),
                 //_navItem(Icons.insights_rounded, 3),        // Analytics/Stats
               ],
             ),
