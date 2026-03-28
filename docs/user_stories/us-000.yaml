@@ -1,0 +1,10 @@
+title: Create a habit
+description: >
+  As a user, I want to create a habit so that I can track and improve
+  my daily routines.
+user_story_id: us-000
+acceptance_criteria:
+  - user can input habit name
+  - user can select habit schedule
+  - habit appears in habit list after creation
+priority: high

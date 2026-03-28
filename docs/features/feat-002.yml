@@ -1,0 +1,24 @@
+id: FEAT-002
+title: Habit Detail Navigation
+user_story_id: US-002
+
+description: >
+  When the user taps a habit in the habit list, the application opens
+  the habit detail screen.
+
+inputs:
+  - habit_id
+
+outputs:
+  - navigate_to_habit_detail
+
+ui_reference:
+  screen: habit_detail
+
+business_rules:
+  - habit must exist
+  - user must have access to habit
+
+edge_cases:
+  - habit deleted while viewing list
+  - habit data not loaded

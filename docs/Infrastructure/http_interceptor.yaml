@@ -1,0 +1,15 @@
+component: http_interceptor
+purpose: |
+  Intercepts all outgoing HTTP requests to add authentication headers, handle global errors,
+  and log requests/responses.
+implementation_notes:
+  - Uses Dio / http package in Flutter
+  - Automatically injects JWT token from local storage
+  - Refreshes token if expired
+behaviors:
+  - onRequest: add Authorization header
+  - onResponse: log response
+  - onError: retry if network error, handle 401 unauthorized
+dependencies:
+  - network_service.dart
+  - auth_service.dart
