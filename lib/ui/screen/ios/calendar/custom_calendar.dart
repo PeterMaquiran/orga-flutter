@@ -62,22 +62,23 @@ class OrgaMonthCalendar extends StatelessWidget {
     final active = CupertinoColors.activeBlue.resolveFrom(context);
 
     const double gridRowExtent = 35;
-    final int gridRows = cells.length ~/5;
+    final int gridRows = cells.length ~/ 7;
 
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        // Month header with prev/next
+        // Month header with prev/next (tight vertical insets — CupertinoButton defaults add a lot of top air)
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+          padding: const EdgeInsets.fromLTRB(4, 0, 4, 2),
           child: Row(
             children: [
               CupertinoButton(
                 padding: EdgeInsets.zero,
+                minimumSize: Size.zero,
                 onPressed: onPrevMonth,
                 child: Icon(
                   CupertinoIcons.chevron_left,
-                  size: 22,
+                  size: 20,
                   color: active,
                 ),
               ),
@@ -95,19 +96,20 @@ class OrgaMonthCalendar extends StatelessWidget {
               ),
               CupertinoButton(
                 padding: EdgeInsets.zero,
+                minimumSize: Size.zero,
                 onPressed: onNextMonth,
                 child: Icon(
                   CupertinoIcons.chevron_right,
-                  size: 22,
+                  size: 20,
                   color: active,
                 ),
               ),
             ],
           ),
         ),
-        // Weekday headers
+        // Weekday headers — minimal gap above the number grid
         Padding(
-          padding: const EdgeInsets.only(top: 4, bottom: 2),
+          padding: const EdgeInsets.only(bottom: 20),
           child: Row(
             children: [
               for (int i = 0; i < 7; i++)
@@ -130,6 +132,7 @@ class OrgaMonthCalendar extends StatelessWidget {
         SizedBox(
           height: gridRows * gridRowExtent,
           child: GridView.builder(
+            padding: EdgeInsets.zero,
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(

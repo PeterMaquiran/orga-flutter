@@ -121,7 +121,7 @@ class _OrgaWeekMonthCalendarState extends State<OrgaWeekMonthCalendar> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Padding(
-          padding: const EdgeInsets.fromLTRB(8, 4, 8, 6),
+          padding: const EdgeInsets.fromLTRB(8, 0, 8, 6),
           child: CupertinoSlidingSegmentedControl<bool>(
             groupValue: _monthView,
             children: const {
