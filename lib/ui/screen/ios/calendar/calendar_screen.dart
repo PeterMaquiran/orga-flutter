@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../shared/navigationBar.dart';
+import 'orga_week_month_calendar.dart';
 
 class CalendarScreen extends StatefulWidget {
   const CalendarScreen({super.key});
@@ -78,15 +79,17 @@ class _CalendarScreenState extends State<CalendarScreen> {
                           elevation: 0,
                           shadowColor: Colors.black26,
                           borderRadius: BorderRadius.circular(16),
-                          child: CalendarDatePicker(
-                            initialDate: _selected,
-                            firstDate: DateTime(2020),
-                            lastDate: DateTime(2035, 12, 31),
-                            onDateChanged: (date) {
-                              setState(() {
-                                _selected = DateTime(date.year, date.month, date.day);
-                              });
-                            },
+                          clipBehavior: Clip.antiAlias,
+                          child: Padding(
+                            padding: const EdgeInsets.fromLTRB(12, 16, 12, 6),
+                            child: OrgaWeekMonthCalendar(
+                              selected: _selected,
+                              onDateChanged: (date) {
+                                setState(() {
+                                  _selected = date;
+                                });
+                              },
+                            ),
                           ),
                         ),
                       ],
