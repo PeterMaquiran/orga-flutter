@@ -1,9 +1,12 @@
 import 'dart:ui';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../../../shared/appbar.dart';
 import '../../../shared/navigationBar.dart';
+import '../home/component/habit_list.dart';
+import '../home/component/weekly_calendar.dart';
 import 'orga_week_month_calendar.dart';
 
 class CalendarScreen extends StatefulWidget {
@@ -15,12 +18,22 @@ class CalendarScreen extends StatefulWidget {
 
 class _CalendarScreenState extends State<CalendarScreen> {
   late DateTime _selected;
+  late ValueNotifier<bool> _monthViewNotifier;
+
 
   @override
   void initState() {
     super.initState();
     final now = DateTime.now();
     _selected = DateTime(now.year, now.month, now.day);
+
+    // Initialize the monthViewNotifier based on your default calendarView
+    _monthViewNotifier = ValueNotifier(calendarView.value == CalendarView.month);
+
+    // Listen to external calendarView changes
+    calendarView.addListener(() {
+      _monthViewNotifier.value = calendarView.value == CalendarView.month;
+    });
   }
 
   @override
@@ -55,6 +68,30 @@ class _CalendarScreenState extends State<CalendarScreen> {
             ),
           ),
 
+
+          /// 2. THE SCROLLABLE CONTENT
+          Positioned.fill(
+            child: CustomScrollView(
+              controller: _scrollController,
+              physics: const BouncingScrollPhysics(),
+              slivers: [
+                SliverPadding(
+                  padding: EdgeInsets.only(
+                    top: safeTop + _appBarHeight + _calendarHeight + 10,
+                    bottom: 120, // Extra bottom padding so items aren't hidden by NavBar
+                    left: 16,
+                    right: 16,
+                  ),
+                  sliver: SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                          (context, index) => HabitCard(index: index,),
+                      childCount: 20,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
 
           ValueListenableBuilder<double>(
             valueListenable: _scrollOffset,
@@ -92,16 +129,119 @@ class _CalendarScreenState extends State<CalendarScreen> {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.stretch,
                                   children: [
-                                    // Text(
-                                    //   _selected == todayDay
-                                    //       ? 'Today'
-                                    //       : MaterialLocalizations.of(context).formatFullDate(_selected),
-                                    //   style: TextStyle(
-                                    //     fontSize: 15,
-                                    //     color: Colors.black.withValues(alpha: 0.45),
-                                    //   ),
-                                    // ),
-                                    const SizedBox(height: 20),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Container(
+                                          width: 44,
+                                          height: 44,
+                                          decoration: BoxDecoration(
+                                            color: CupertinoColors.systemBackground.resolveFrom(context),
+                                            shape: BoxShape.circle,
+                                            border: Border.all(
+                                              color: const Color(0xFF3C3C43).withValues(alpha: 0.12),
+                                              width: 1,
+                                            ),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: Colors.black.withValues(alpha: 0.06),
+                                                blurRadius: 8,
+                                                offset: const Offset(0, 2),
+                                              ),
+                                            ],
+                                          ),
+                                          child: CupertinoButton(
+                                            padding: EdgeInsets.zero,
+                                            onPressed: () {},
+                                            child: Icon(
+                                              CupertinoIcons.chart_bar_alt_fill,
+                                              size: 22,
+                                              color: CupertinoColors.secondaryLabel.resolveFrom(context),
+                                            ),
+                                          ),
+                                        ),
+                                        Text(
+                                          _selected == todayDay
+                                              ? 'Today'
+                                              : (() {
+                                            final String yearStr =
+                                            _selected.year != today.year ? ', ${_selected.year}' : '';
+                                            final String month = [
+                                              'Jan',
+                                              'Feb',
+                                              'Mar',
+                                              'Apr',
+                                              'May',
+                                              'Jun',
+                                              'Jul',
+                                              'Aug',
+                                              'Sep',
+                                              'Oct',
+                                              'Nov',
+                                              'Dec',
+                                            ][_selected.month - 1];
+                                            return '$month ${_selected.day}$yearStr';
+                                          })(),
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 17,
+                                            letterSpacing: -0.41,
+                                            color: CupertinoColors.label.resolveFrom(context),
+                                          ),
+                                        ),
+                                        Container(
+                                          width: 100,
+                                          decoration: BoxDecoration(
+                                            color: CupertinoColors.systemBackground.resolveFrom(context),
+                                            borderRadius: BorderRadius.circular(22),
+                                            border: Border.all(
+                                              color: const Color(0xFF3C3C43).withValues(alpha: 0.12),
+                                              width: 1,
+                                            ),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: Colors.black.withValues(alpha: 0.06),
+                                                blurRadius: 8,
+                                                offset: const Offset(0, 2),
+                                              ),
+                                            ],
+                                          ),
+                                          child: Row(
+                                            children: [
+                                              SizedBox(
+                                                width: 44,
+                                                height: 44,
+                                                child: CupertinoButton(
+                                                  padding: EdgeInsets.zero,
+                                                  onPressed: () {},
+                                                  child: Icon(
+                                                    CupertinoIcons.add,
+                                                    size: 22,
+                                                    color: CupertinoColors.secondaryLabel.resolveFrom(context),
+                                                  ),
+                                                ),
+                                              ),
+                                              const SizedBox(width: 10),
+                                              SizedBox(
+                                                width: 44,
+                                                height: 44,
+                                                child: CupertinoButton(
+                                                  padding: EdgeInsets.zero,
+                                                  onPressed: () {
+                                                    showCalendarViewSelector(context);
+                                                  },
+                                                  child: Icon(
+                                                    CupertinoIcons.slider_horizontal_3,
+                                                    size: 22,
+                                                    color: CupertinoColors.secondaryLabel.resolveFrom(context),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                     Material(
                                       color: Colors.white,
                                       elevation: 0,
@@ -111,6 +251,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                                       child: Padding(
                                         padding: const EdgeInsets.fromLTRB(12, 16, 12, 6),
                                         child: OrgaWeekMonthCalendar(
+                                          monthViewNotifier: _monthViewNotifier,
                                           selected: _selected,
                                           onDateChanged: (date) {
                                             setState(() {
@@ -142,4 +283,44 @@ class _CalendarScreenState extends State<CalendarScreen> {
       bottomNavigationBar: const FloatingNavBar(),
     );
   }
+}
+
+
+
+enum CalendarView {
+  week,
+  month,
+}
+
+final ValueNotifier<CalendarView> calendarView =
+ValueNotifier(CalendarView.week);
+
+void showCalendarViewSelector(BuildContext context) {
+  showCupertinoModalPopup(
+    context: context,
+    builder: (context) => CupertinoActionSheet(
+      title: const Text("Calendar View"),
+      actions: [
+        CupertinoActionSheetAction(
+          onPressed: () {
+            calendarView.value = CalendarView.week;
+            Navigator.pop(context);
+          },
+          child: const Text("Week View"),
+        ),
+        CupertinoActionSheetAction(
+          onPressed: () {
+            calendarView.value = CalendarView.month;
+            Navigator.pop(context);
+          },
+          child: const Text("Month View"),
+        ),
+      ],
+      cancelButton: CupertinoActionSheetAction(
+        isDefaultAction: true,
+        onPressed: () => Navigator.pop(context),
+        child: const Text("Cancel"),
+      ),
+    ),
+  );
 }
