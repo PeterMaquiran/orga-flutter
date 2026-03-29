@@ -115,30 +115,57 @@ class _OrgaWeekMonthCalendarState extends State<OrgaWeekMonthCalendar> {
   Widget build(BuildContext context) {
     final loc = MaterialLocalizations.of(context);
     final today = DateTime.now();
+    final days = ["S", "M", "T", "W", "T", "F", "S"];
 
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(8, 0, 8, 6),
-          child: CupertinoSlidingSegmentedControl<bool>(
-            groupValue: _monthView,
-            children: const {
-              false: Padding(
-                padding: EdgeInsets.symmetric(vertical: 10),
-                child: Text('Week'),
-              ),
-              true: Padding(
-                padding: EdgeInsets.symmetric(vertical: 10),
-                child: Text('Month'),
-              ),
-            },
-            onValueChanged: (v) {
-              if (v != null) _setMonthView(v);
-            },
+        SizedBox(
+          height: 40,
+          width: 52,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: days.map((day) {
+              final isSunday = day == "Sun";
+
+              return SizedBox(
+                width: 52,
+                child: Text(
+                  day,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 0.06,
+                    color: isSunday
+                        ? CupertinoColors.activeBlue.resolveFrom(context)
+                        : CupertinoColors.tertiaryLabel.resolveFrom(context),
+                  ),
+                ),
+              );
+            }).toList(),
           ),
         ),
+        // Padding(
+        //   padding: const EdgeInsets.fromLTRB(8, 0, 8, 6),
+        //   child: CupertinoSlidingSegmentedControl<bool>(
+        //     groupValue: _monthView,
+        //     children: const {
+        //       false: Padding(
+        //         padding: EdgeInsets.symmetric(vertical: 10),
+        //         child: Text('Week'),
+        //       ),
+        //       true: Padding(
+        //         padding: EdgeInsets.symmetric(vertical: 10),
+        //         child: Text('Month'),
+        //       ),
+        //     },
+        //     onValueChanged: (v) {
+        //       if (v != null) _setMonthView(v);
+        //     },
+        //   ),
+        // ),
         ClipRect(
           child: AnimatedCrossFade(
             duration: _kTransition,
@@ -301,7 +328,7 @@ class _WeekDayCell extends StatelessWidget {
             ),
             const SizedBox(height: 4),
             Text(
-              '${date.day}',
+              '${date.day}.',
               style: TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.w600,
