@@ -169,15 +169,9 @@ class InfiniteWeeklyCalendar extends StatelessWidget {
       width: 48,
       decoration: BoxDecoration(
         color: isToday
-            ? active.withValues(alpha: 0.12)
+            ? active.withValues(alpha: 0.05)
             : CupertinoColors.systemBackground.resolveFrom(context),
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(
-          color: isToday
-              ? active.withValues(alpha: 0.35)
-              : const Color(0xFF3C3C43).withValues(alpha: 0.08),
-          width: isToday ? 1 : 0.5,
-        ),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
