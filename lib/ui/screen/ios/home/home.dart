@@ -17,9 +17,11 @@ class _HomeScreenState extends State<HomeScreen> {
   final ScrollController _scrollController = ScrollController();
   final ValueNotifier<double> _scrollOffset = ValueNotifier(0);
 
-  // Configuration Constants
-  final double _appBarHeight = 60.0;
+  // Configuration Constants (large title needs a bit more vertical room)
+  final double _appBarHeight = 64.0;
   final double _calendarHeight = 130.0;
+
+  static const Color _iosGroupedBackground = Color(0xFFF2F2F7);
 
   @override
   void initState() {
@@ -47,21 +49,9 @@ class _HomeScreenState extends State<HomeScreen> {
       // We keep the Stack approach to handle the background and sticky header
       body: Stack(
         children: [
-          /// 1. THE FIXED GRADIENT BACKGROUND
+          /// 1. iOS system grouped background (Settings / Reminders style)
           Positioned.fill(
-            child: Container(
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    Color(0xFFF8F9FA),
-                    Color(0xFFE9ECEF),
-                    Color(0xFFDEE2E6),
-                  ],
-                ),
-              ),
-            ),
+            child: ColoredBox(color: _iosGroupedBackground),
           ),
 
           /// 2. THE SCROLLABLE CONTENT
@@ -106,7 +96,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: BackdropFilter(
                     filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
                     child: Container(
-                      color: Colors.white.withOpacity(0.7),
+                      color: Colors.white.withValues(alpha: 0.72),
                       padding: EdgeInsets.only(top: safeTop),
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
@@ -128,7 +118,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                 child: const InfiniteWeeklyCalendar(),
                               )),
 
-                          const Divider(height: 1, color: Colors.black12),
+                          Divider(
+                            height: 1,
+                            thickness: 0.5,
+                            color: const Color(0xFF3C3C43).withValues(alpha: 0.29),
+                          ),
                         ],
                       ),
                     ),

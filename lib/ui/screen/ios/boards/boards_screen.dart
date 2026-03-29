@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../../../shared/navigationBar.dart';
@@ -16,6 +17,8 @@ class _BoardItem {
 
 class BoardsScreen extends StatelessWidget {
   const BoardsScreen({super.key});
+
+  static const Color _iosGroupedBg = Color(0xFFF2F2F7);
 
   static const List<_BoardItem> _boards = [
     _BoardItem(
@@ -43,167 +46,113 @@ class BoardsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final safeTop = MediaQuery.of(context).padding.top;
+    final secondaryLabel = CupertinoColors.secondaryLabel.resolveFrom(context);
 
     return Scaffold(
       extendBody: true,
-      body: Stack(
-        children: [
-          Positioned.fill(
-            child: Container(
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    Color(0xFFF8F9FA),
-                    Color(0xFFE9ECEF),
-                    Color(0xFFDEE2E6),
-                  ],
+      body: ColoredBox(
+        color: _iosGroupedBg,
+        child: CustomScrollView(
+          physics: const BouncingScrollPhysics(),
+          slivers: [
+            SliverPadding(
+              padding: EdgeInsets.fromLTRB(20, safeTop + 12, 20, 0),
+              sliver: SliverToBoxAdapter(
+                child: Text(
+                  'Boards',
+                  style: TextStyle(
+                    fontSize: 34,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 0.37,
+                    height: 1.1,
+                    color: CupertinoColors.label.resolveFrom(context),
+                  ),
                 ),
               ),
             ),
-          ),
-          Positioned.fill(
-            child: CustomScrollView(
-              physics: const BouncingScrollPhysics(),
-              slivers: [
-                SliverPadding(
-                  padding: EdgeInsets.fromLTRB(20, safeTop + 16, 20, 120),
-                  sliver: SliverToBoxAdapter(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        const Text(
-                          'Boards',
-                          style: TextStyle(
-                            fontSize: 28,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: -0.5,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          'Your workspaces',
-                          style: TextStyle(
-                            fontSize: 15,
-                            color: Colors.black.withValues(alpha: 0.45),
-                          ),
-                        ),
-                        const SizedBox(height: 20),
-                        ...List.generate(_boards.length, (i) {
-                          final b = _boards[i];
-                          return Padding(
-                            padding: EdgeInsets.only(bottom: i == _boards.length - 1 ? 0 : 10),
-                            child: _BoardRow(item: b),
-                          );
-                        }),
-                        const SizedBox(height: 12),
-                        Material(
-                          color: Colors.white.withValues(alpha: 0.65),
-                          borderRadius: BorderRadius.circular(12),
-                          child: InkWell(
-                            borderRadius: BorderRadius.circular(12),
-                            onTap: () {},
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.add_circle_outline_rounded,
-                                    size: 22,
-                                    color: Colors.black.withValues(alpha: 0.45),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Text(
-                                    'Create board',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.black.withValues(alpha: 0.55),
-                                    ),
-                                  ),
-                                ],
-                              ),
+            SliverPadding(
+              padding: const EdgeInsets.fromLTRB(0, 8, 0, 12),
+              sliver: SliverToBoxAdapter(
+                child: CupertinoListSection.insetGrouped(
+                  backgroundColor: _iosGroupedBg,
+                  header: Text(
+                    'Your workspaces',
+                    style: TextStyle(
+                      color: secondaryLabel,
+                      fontSize: 13,
+                      letterSpacing: -0.08,
+                    ),
+                  ),
+                  children: [
+                    for (final b in _boards)
+                      CupertinoListTile.notched(
+                        leading: Center(
+                          child: Container(
+                            width: 4,
+                            height: 28,
+                            decoration: BoxDecoration(
+                              color: b.accent,
+                              borderRadius: BorderRadius.circular(2),
                             ),
                           ),
                         ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-      bottomNavigationBar: const FloatingNavBar(),
-    );
-  }
-}
-
-class _BoardRow extends StatelessWidget {
-  const _BoardRow({required this.item});
-
-  final _BoardItem item;
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: Colors.white,
-      elevation: 0,
-      shadowColor: Colors.black12,
-      borderRadius: BorderRadius.circular(12),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(12),
-        onTap: () {},
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-          child: Row(
-            children: [
-              Container(
-                width: 4,
-                height: 44,
-                decoration: BoxDecoration(
-                  color: item.accent,
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-              const SizedBox(width: 14),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      item.title,
-                      style: const TextStyle(
-                        fontSize: 17,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: -0.2,
-                      ),
-                    ),
-                    if (item.subtitle != null) ...[
-                      const SizedBox(height: 2),
-                      Text(
-                        item.subtitle!,
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.black.withValues(alpha: 0.4),
+                        leadingSize: 12,
+                        title: Text(
+                          b.title,
+                          style: const TextStyle(
+                            fontSize: 17,
+                            fontWeight: FontWeight.w400,
+                            letterSpacing: -0.41,
+                          ),
                         ),
+                        subtitle: b.subtitle != null
+                            ? Text(
+                                b.subtitle!,
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  color: secondaryLabel,
+                                  letterSpacing: -0.24,
+                                ),
+                              )
+                            : null,
+                        trailing: const CupertinoListTileChevron(),
+                        onTap: () {},
                       ),
-                    ],
                   ],
                 ),
               ),
-              Icon(
-                Icons.chevron_right_rounded,
-                color: Colors.black.withValues(alpha: 0.2),
-                size: 26,
+            ),
+            SliverPadding(
+              padding: const EdgeInsets.fromLTRB(0, 0, 0, 120),
+              sliver: SliverToBoxAdapter(
+                child: CupertinoListSection.insetGrouped(
+                  backgroundColor: _iosGroupedBg,
+                  children: [
+                    CupertinoListTile.notched(
+                      leading: Icon(
+                        CupertinoIcons.add_circled,
+                        color: CupertinoColors.activeBlue.resolveFrom(context),
+                        size: 26,
+                      ),
+                      title: Text(
+                        'Create board',
+                        style: TextStyle(
+                          fontSize: 17,
+                          color: CupertinoColors.activeBlue.resolveFrom(context),
+                          fontWeight: FontWeight.w400,
+                          letterSpacing: -0.41,
+                        ),
+                      ),
+                      onTap: () {},
+                    ),
+                  ],
+                ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
+      bottomNavigationBar: const FloatingNavBar(),
     );
   }
 }
