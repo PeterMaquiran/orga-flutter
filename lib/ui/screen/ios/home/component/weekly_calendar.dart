@@ -19,6 +19,7 @@ class InfiniteWeeklyCalendar extends StatelessWidget {
     final PageController controller = PageController(initialPage: _virtualCenter);
     final ValueNotifier<DateTime> focusedDate = ValueNotifier(_getWeekForIndex(_virtualCenter, today).last);
     final Color iconColor = CupertinoColors.secondaryLabel.resolveFrom(context);
+    final days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
     return Column(
       children: [
@@ -137,7 +138,32 @@ class InfiniteWeeklyCalendar extends StatelessWidget {
           ),
         ),
         SizedBox(
-          height: 70,
+          height: 40,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: days.map((day) {
+              final isSunday = day == "Sun";
+
+              return SizedBox(
+                width: 35,
+                child: Text(
+                  day,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 0.06,
+                    color: isSunday
+                        ? CupertinoColors.activeBlue.resolveFrom(context)
+                        : CupertinoColors.tertiaryLabel.resolveFrom(context),
+                  ),
+                ),
+              );
+            }).toList(),
+          ),
+        ),
+        SizedBox(
+          height: 35,
           child: PageView.builder(
             controller: controller,
             onPageChanged: (i) => focusedDate.value = _getWeekForIndex(i, today).last,
@@ -158,35 +184,33 @@ class InfiniteWeeklyCalendar extends StatelessWidget {
     );
   }
 
-  Widget _buildDayCard(BuildContext context, DateTime date, bool isToday) {
-    const labels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-    final label = labels[date.weekday % 7];
+  Widget _buildDayCard(
+      BuildContext context,
+      DateTime date,
+      bool isToday, {
+        double completion = 0.75,
+      }) {
     final active = CupertinoColors.activeBlue.resolveFrom(context);
     final labelColor = CupertinoColors.label.resolveFrom(context);
-    final tertiary = CupertinoColors.tertiaryLabel.resolveFrom(context);
 
-    return Container(
-      width: 48,
-      decoration: BoxDecoration(
-        color: isToday
-            ? active.withValues(alpha: 0.05)
-            : CupertinoColors.systemBackground.resolveFrom(context),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 11,
-              fontWeight: FontWeight.w600,
-              letterSpacing: 0.06,
-              color: isToday ? active : tertiary,
-            ),
+    return SizedBox(
+      width: 35,
+      height: 35,
+      child: CustomPaint(
+        painter: _DayProgressPainter(
+          progress: completion,
+          color: active,
+        ),
+        child: Container(
+          margin: const EdgeInsets.all(3),
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: isToday
+                ? active.withValues(alpha: 0.05)
+                : CupertinoColors.systemBackground.resolveFrom(context),
           ),
-          const SizedBox(height: 4),
-          Text(
+          alignment: Alignment.center,
+          child: Text(
             date.day.toString(),
             style: TextStyle(
               fontSize: 13,
@@ -195,8 +219,60 @@ class InfiniteWeeklyCalendar extends StatelessWidget {
               color: isToday ? active : labelColor,
             ),
           ),
-        ],
+        ),
       ),
     );
   }
+
+}
+
+
+
+class _DayProgressPainter extends CustomPainter {
+  final double progress;
+  final Color color;
+
+  _DayProgressPainter({
+    required this.progress,
+    required this.color,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final strokeWidth = 2.5;
+
+    final rect = Offset.zero & size;
+
+    final backgroundPaint = Paint()
+      ..color = const Color(0xFF3C3C43).withValues(alpha: 0.12)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = strokeWidth;
+
+    final progressPaint = Paint()
+      ..color = color
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = strokeWidth
+      ..strokeCap = StrokeCap.round;
+
+    // background track
+    canvas.drawArc(
+      rect.deflate(1),
+      0,
+      2 * 3.1416,
+      false,
+      backgroundPaint,
+    );
+
+    // progress arc
+    canvas.drawArc(
+      rect.deflate(1),
+      -3.1416 / 2,
+      2 * 3.1416 * progress,
+      false,
+      progressPaint,
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
 }

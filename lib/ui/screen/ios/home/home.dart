@@ -19,7 +19,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   // Configuration Constants (large title needs a bit more vertical room)
   final double _appBarHeight = 64.0;
-  final double _calendarHeight = 130.0;
+  final double _calendarHeight = 150.0;
 
   static const Color _iosGroupedBackground = Color(0xFFF2F2F7);
 
