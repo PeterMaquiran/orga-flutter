@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui';
 
+/// Home large-title style row (used with the shrinking header on [HomeScreen]).
 class appBar extends StatelessWidget {
   const appBar({super.key});
 
@@ -10,30 +11,30 @@ class appBar extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        const Text(
-          "Habit",
+        Text(
+          'Habits',
           style: TextStyle(
-            fontSize: 28,
-            fontWeight: FontWeight.bold,
-            letterSpacing: -0.5, // iOS titles are slightly tighter
+            fontSize: 34,
+            fontWeight: FontWeight.w700,
+            letterSpacing: 0.37,
+            height: 1.1,
+            color: CupertinoColors.label.resolveFrom(context),
           ),
         ),
-        GestureDetector(
-          onTap: () {
-            // Profile action
-          },
+        CupertinoButton(
+          padding: EdgeInsets.zero,
+          onPressed: () {},
           child: Container(
-            width: 44,
-            height: 44,
+            width: 36,
+            height: 36,
             decoration: BoxDecoration(
-              color: Colors.grey[300], // Soft gray background
+              color: CupertinoColors.systemGrey5.resolveFrom(context),
               shape: BoxShape.circle,
-              // If you have a profile image, use DecorationImage here
             ),
-            child: const Icon(
-              Icons.person,
-              size: 30,
-              color: Colors.white, // White icon on gray looks very iOS
+            child: Icon(
+              CupertinoIcons.person_fill,
+              size: 20,
+              color: CupertinoColors.secondaryLabel.resolveFrom(context),
             ),
           ),
         ),
@@ -42,10 +43,9 @@ class appBar extends StatelessWidget {
   }
 }
 
-
-
-
 class OrgaAppBar extends StatelessWidget implements PreferredSizeWidget {
+  const OrgaAppBar({super.key});
+
   @override
   Size get preferredSize => const Size.fromHeight(60);
 
@@ -55,7 +55,7 @@ class OrgaAppBar extends StatelessWidget implements PreferredSizeWidget {
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
         child: AppBar(
-          backgroundColor: Colors.white.withOpacity(0.7),
+          backgroundColor: Colors.white.withValues(alpha: 0.72),
           elevation: 0,
           title: const Text(
             'Orga',
@@ -67,14 +67,11 @@ class OrgaAppBar extends StatelessWidget implements PreferredSizeWidget {
           ),
           centerTitle: true,
           actions: [
-            // Plus Button
             CupertinoButton(
               padding: EdgeInsets.zero,
               child: const Icon(CupertinoIcons.add, color: Colors.black87),
               onPressed: () => _handleAddTask(context),
             ),
-
-            // More Options (Popup Menu)
             PopupMenuButton<String>(
               icon: const Icon(CupertinoIcons.ellipsis, color: Colors.black87),
               shape: RoundedRectangleBorder(

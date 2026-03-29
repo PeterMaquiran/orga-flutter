@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:orga/ui/screen/ios/auth/email_confirmation.dart';
@@ -49,6 +50,12 @@ class OrgaApp extends StatelessWidget {
       routerConfig: _router,
       title: 'Orga',
       debugShowCheckedModeBanner: false,
+      builder: (context, child) {
+        return CupertinoTheme(
+          data: const CupertinoThemeData(brightness: Brightness.light),
+          child: child ?? const SizedBox.shrink(),
+        );
+      },
     );
   }
 }
