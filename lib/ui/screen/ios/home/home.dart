@@ -108,7 +108,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 child: SizedBox(
                                   height: currentAppBarHeight,
                                   child: Padding(padding: EdgeInsets.only(bottom: 14),
-                                    child: const Center(child: appBar())
+                                    child: const Center(child: appBar(title: "Habit",))
                                     ,),
                                 ),
                               )),

@@ -4,7 +4,9 @@ import 'dart:ui';
 
 /// Home large-title style row (used with the shrinking header on [HomeScreen]).
 class appBar extends StatelessWidget {
-  const appBar({super.key});
+  final String title;
+
+  const appBar({super.key, required this.title,});
 
   @override
   Widget build(BuildContext context) {
@@ -12,7 +14,7 @@ class appBar extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
-          'Habits',
+          title,
           style: TextStyle(
             fontSize: 34,
             fontWeight: FontWeight.w700,

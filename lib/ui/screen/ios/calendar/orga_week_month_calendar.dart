@@ -130,7 +130,7 @@ class _OrgaWeekMonthCalendarState extends State<OrgaWeekMonthCalendar> {
               final isSunday = day == "Sun";
 
               return SizedBox(
-                width: 52,
+                width: 35,
                 child: Text(
                   day,
                   textAlign: TextAlign.center,
@@ -247,14 +247,14 @@ class _WeekStrip extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
       child: SizedBox(
-        height: 76,
+        height: 35,
         child: PageView.builder(
           controller: pageController,
           onPageChanged: onWeekPageChanged,
           itemBuilder: (context, index) {
             final week = weekDaysForPage(index);
             return Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: week.map((date) {
                 final isToday = date.year == today.year &&
                     date.month == today.month &&
@@ -304,31 +304,32 @@ class _WeekDayCell extends StatelessWidget {
       minimumSize: Size.zero,
       onPressed: onTap,
       child: Container(
-        width: 44,
+        width: 35,
         decoration: BoxDecoration(
-          color: highlight
-              ? active.withValues(alpha: 0.08)
-              : CupertinoColors.systemGrey6.resolveFrom(context),
-          borderRadius: BorderRadius.circular(10),
-          border: isSelected && !isToday
-              ? Border.all(color: active.withValues(alpha: 0.4))
-              : null,
+          shape: BoxShape.circle,
+          border: Border.all(
+            color: const Color(0xFF3C3C43).withValues(alpha: 0.12),
+            width: 1,
+          ),
+          color: isToday
+              ? active.withValues(alpha: 0.05)
+              : CupertinoColors.systemBackground.resolveFrom(context),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            // Text(
+            //   label,
+            //   style: TextStyle(
+            //     fontSize: 11,
+            //     fontWeight: FontWeight.w600,
+            //     letterSpacing: 0.06,
+            //     color: isToday ? active : tertiary,
+            //   ),
+            // ),
+            // const SizedBox(height: 4),
             Text(
-              label,
-              style: TextStyle(
-                fontSize: 11,
-                fontWeight: FontWeight.w600,
-                letterSpacing: 0.06,
-                color: isToday ? active : tertiary,
-              ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              '${date.day}.',
+              '${date.day}',
               style: TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.w600,
