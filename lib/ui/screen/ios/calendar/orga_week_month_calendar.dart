@@ -274,11 +274,13 @@ class _MonthGrid extends StatelessWidget {
     }
 
     return GridView.builder(
-      padding: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.only(bottom: 8, right: 0, left: 0),
       physics: const NeverScrollableScrollPhysics(),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 7,
         mainAxisExtent: 35,
+        crossAxisSpacing: 23, // horizontal spacing
+        mainAxisSpacing: 0,  // vertical spacing
       ),
       itemCount: cells.length,
       itemBuilder: (context, index) {
