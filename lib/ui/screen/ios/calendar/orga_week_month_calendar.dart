@@ -119,30 +119,33 @@ class _OrgaWeekMonthCalendarState extends State<OrgaWeekMonthCalendar> {
 
     return Column(
       mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        SizedBox(
-          height: 40,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: days.map((day) {
-              final isSunday = day == "S";
-              return SizedBox(
-                width: 35,
-                child: Text(
-                  day,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600,
-                    color: isSunday
-                        ? CupertinoColors.activeBlue.resolveFrom(context)
-                        : CupertinoColors.tertiaryLabel.resolveFrom(context),
+        Padding(padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
+          child: SizedBox(
+            height: 40,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: days.map((day) {
+                final isSunday = day == "S";
+                return SizedBox(
+                  width: 35,
+                  child: Text(
+                    day,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      color: isSunday
+                          ? CupertinoColors.activeBlue.resolveFrom(context)
+                          : CupertinoColors.tertiaryLabel.resolveFrom(context),
+                    ),
                   ),
-                ),
-              );
-            }).toList(),
-          ),
+                );
+              }).toList(),
+            ),
+          )
         ),
         ClipRect(
           child: AnimatedCrossFade(
@@ -208,8 +211,10 @@ class OrgaMonthCalendar extends StatelessWidget {
     const double gridRowExtent = 35;
     final gridHeight = weekCount * gridRowExtent;
 
-    return Column(
+    return  Column(
       mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
         AnimatedSize(
           duration: const Duration(milliseconds: 260),
@@ -361,7 +366,7 @@ class _WeekStrip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.only(bottom: 8, left: 0, right: 0),
       child: SizedBox(
         height: 35,
         child: PageView.builder(

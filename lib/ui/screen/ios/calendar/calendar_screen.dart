@@ -266,13 +266,13 @@ class _CalendarScreenState extends State<CalendarScreen> {
                                       ],
                                     ),
                                     Material(
-                                      color: Colors.white,
+                                      color: Colors.transparent,
                                       elevation: 0,
                                       shadowColor: Colors.black26,
                                       borderRadius: BorderRadius.circular(16),
                                       clipBehavior: Clip.antiAlias,
                                       child: Padding(
-                                        padding: const EdgeInsets.fromLTRB(12, 16, 12, 6),
+                                        padding: const EdgeInsets.fromLTRB(0, 0, 0, 19),
                                         child: OrgaWeekMonthCalendar(
                                           monthViewNotifier: _monthViewNotifier,
                                           selected: _selected,
