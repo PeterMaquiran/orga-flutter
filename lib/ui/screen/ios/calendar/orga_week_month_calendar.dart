@@ -1,52 +1,21 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-/// Utilities for date handling
-class OrgaCalendarDateUtils {
-  /// Returns a DateTime without time
-  static DateTime dateOnly(DateTime d) => DateTime(d.year, d.month, d.day);
+import 'calendar_date_utils.dart';
+import 'orga_calendar_controller.dart';
 
-  /// Returns start of the week according to locale
-  static DateTime startOfWeek(DateTime date, MaterialLocalizations loc) {
-    final weekday = date.weekday; // 1 = Mon, 7 = Sun
-    return date.subtract(Duration(days: weekday % 7));
-  }
-
-  /// Difference in weeks between two dates
-  static int weekDifference(DateTime from, DateTime to, MaterialLocalizations loc) {
-    final diff = dateOnly(to).difference(dateOnly(from)).inDays;
-    return (diff / 7).floor();
-  }
-}
-
-const List<String> _monthNames = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December",
-];
-
-/// Custom calendar with week/month toggle
 class OrgaWeekMonthCalendar extends StatefulWidget {
   const OrgaWeekMonthCalendar({
     super.key,
     required this.selected,
     required this.onDateChanged,
+    this.onDisplayedMonthChanged,
     this.monthViewNotifier,
   });
 
   final DateTime selected;
   final ValueChanged<DateTime> onDateChanged;
-
-  /// External notifier to control week/month view
+  final ValueChanged<DateTime>? onDisplayedMonthChanged;
   final ValueNotifier<bool>? monthViewNotifier;
 
   @override
@@ -54,143 +23,96 @@ class OrgaWeekMonthCalendar extends StatefulWidget {
 }
 
 class _OrgaWeekMonthCalendarState extends State<OrgaWeekMonthCalendar> {
-  static const int _virtualCenter = 10000;
   static const Duration _kTransition = Duration(milliseconds: 400);
 
-  late PageController _pageController;
-  late PageController _monthPageController;
-  late DateTime _selected;
-  late DateTime _displayedMonth;
-  late DateTime _monthAnchor;
-  late bool _monthView;
-  int _monthPageIndex = _virtualCenter;
+  late OrgaCalendarController _controller;
+  VoidCallback? _externalViewListener;
+  late DateTime _lastReportedMonth;
+  late DateTime _lastReportedSelected;
   bool _didAlignWeekPage = false;
 
   @override
   void initState() {
     super.initState();
-    _selected = OrgaCalendarDateUtils.dateOnly(widget.selected);
-    _displayedMonth = DateTime(_selected.year, _selected.month);
-    _monthAnchor = _displayedMonth;
-    _monthView = widget.monthViewNotifier?.value ?? false;
-
-    // Listen for external monthView changes
-    widget.monthViewNotifier?.addListener(() {
-      if (!mounted) return;
-      setState(() => _monthView = widget.monthViewNotifier!.value);
-      if (!_monthView) _jumpToSelectedWeek();
-    });
-
-    _pageController = PageController(initialPage: _virtualCenter);
-    _monthPageController = PageController(initialPage: _virtualCenter);
-  }
-
-  void _jumpToSelectedWeek() {
-    final loc = MaterialLocalizations.of(context);
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) return;
-      _pageController.jumpToPage(_pageForSelected(loc));
-    });
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (_didAlignWeekPage) return;
-    _didAlignWeekPage = true;
-    _jumpToSelectedWeek();
+    _controller = OrgaCalendarController(
+      initialSelected: widget.selected,
+      initialMonthView: widget.monthViewNotifier?.value ?? false,
+    )..addListener(_onControllerChanged);
+    _lastReportedMonth = _controller.displayedMonth;
+    _lastReportedSelected = _controller.selected;
+    _attachExternalViewNotifier(widget.monthViewNotifier);
   }
 
   @override
   void didUpdateWidget(OrgaWeekMonthCalendar oldWidget) {
     super.didUpdateWidget(oldWidget);
     final next = OrgaCalendarDateUtils.dateOnly(widget.selected);
-    if (next != _selected) {
-      setState(() {
-        _selected = next;
-        _displayedMonth = DateTime(_selected.year, _selected.month);
-      });
-      if (!_monthView) _jumpToSelectedWeek();
-      _syncMonthPage(animate: false);
+    if (next != _controller.selected) {
+      _controller.setSelected(next);
+      if (!_controller.monthView) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (!mounted) return;
+          _controller.jumpToSelectedWeek(MaterialLocalizations.of(context));
+        });
+      }
+    }
+
+    if (oldWidget.monthViewNotifier != widget.monthViewNotifier) {
+      if (_externalViewListener != null) {
+        oldWidget.monthViewNotifier?.removeListener(_externalViewListener!);
+      }
+      _externalViewListener = null;
+      _attachExternalViewNotifier(widget.monthViewNotifier);
     }
   }
 
   @override
   void dispose() {
-    _pageController.dispose();
-    _monthPageController.dispose();
+    if (_externalViewListener != null) {
+      widget.monthViewNotifier?.removeListener(_externalViewListener!);
+    }
+    _controller
+      ..removeListener(_onControllerChanged)
+      ..dispose();
     super.dispose();
   }
 
-  DateTime _monthForPage(int index) {
-    final offset = index - _virtualCenter;
-    return DateTime(_monthAnchor.year, _monthAnchor.month + offset);
-  }
-
-  int _pageForMonth(DateTime month) {
-    return _virtualCenter +
-        (month.year - _monthAnchor.year) * 12 +
-        (month.month - _monthAnchor.month);
-  }
-
-  void _syncMonthPage({required bool animate}) {
-    if (!_monthPageController.hasClients) return;
-    final target = _pageForMonth(_displayedMonth);
-    _monthPageIndex = target;
-    if (animate) {
-      _monthPageController.animateToPage(
-        target,
-        duration: const Duration(milliseconds: 280),
-        curve: Curves.easeOutCubic,
-      );
-    } else {
-      _monthPageController.jumpToPage(target);
+  void _onControllerChanged() {
+    if (_controller.selected != _lastReportedSelected) {
+      _lastReportedSelected = _controller.selected;
+      widget.onDateChanged(_controller.selected);
     }
-  }
-
-  void _goToMonth(int delta) {
-    final next = DateTime(_displayedMonth.year, _displayedMonth.month + delta);
-    setState(() {
-      _displayedMonth = next;
-      _monthPageIndex = _pageForMonth(next);
-    });
-    if (_monthPageController.hasClients) {
-      _monthPageController.animateToPage(
-        _monthPageIndex,
-        duration: const Duration(milliseconds: 280),
-        curve: Curves.easeOutCubic,
-      );
+    if (_controller.displayedMonth != _lastReportedMonth) {
+      _lastReportedMonth = _controller.displayedMonth;
+      widget.onDisplayedMonthChanged?.call(_controller.displayedMonth);
     }
+    if (mounted) setState(() {});
   }
 
-  List<DateTime> _weekDaysForPage(int index, MaterialLocalizations loc) {
-    final today = DateTime.now();
-    final anchorWeekStart = OrgaCalendarDateUtils.startOfWeek(
-      OrgaCalendarDateUtils.dateOnly(today),
-      loc,
-    );
-    final offset = index - _virtualCenter;
-    final weekStart = anchorWeekStart.add(Duration(days: offset * 7));
-    return List.generate(7, (i) => weekStart.add(Duration(days: i)));
-  }
-
-  int _pageForSelected(MaterialLocalizations loc) {
-    return _virtualCenter +
-        OrgaCalendarDateUtils.weekDifference(
-          DateTime.now(),
-          _selected,
-          loc,
-        );
+  void _attachExternalViewNotifier(ValueNotifier<bool>? notifier) {
+    if (notifier == null) return;
+    _externalViewListener = () {
+      final loc = MaterialLocalizations.of(context);
+      _controller.setMonthView(notifier.value, loc: loc);
+    };
+    notifier.addListener(_externalViewListener!);
   }
 
   void _emit(DateTime d) {
-    final day = OrgaCalendarDateUtils.dateOnly(d);
-    setState(() => _selected = day);
-    widget.onDateChanged(day);
+    _controller.setSelected(d);
+    widget.onDateChanged(_controller.selected);
   }
 
   @override
   Widget build(BuildContext context) {
+    if (!_didAlignWeekPage) {
+      _didAlignWeekPage = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        _controller.jumpToSelectedWeek(MaterialLocalizations.of(context));
+      });
+    }
+
     final loc = MaterialLocalizations.of(context);
     final today = DateTime.now();
     const days = ["S", "M", "T", "W", "T", "F", "S"];
@@ -199,7 +121,6 @@ class _OrgaWeekMonthCalendarState extends State<OrgaWeekMonthCalendar> {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        // Weekday header
         SizedBox(
           height: 40,
           child: Row(
@@ -223,27 +144,6 @@ class _OrgaWeekMonthCalendarState extends State<OrgaWeekMonthCalendar> {
             }).toList(),
           ),
         ),
-        // Week/Month toggle
-        // Padding(
-        //   padding: const EdgeInsets.fromLTRB(8, 0, 8, 6),
-        //   child: CupertinoSlidingSegmentedControl<bool>(
-        //     groupValue: _monthView,
-        //     children: const {
-        //       false: Padding(
-        //         padding: EdgeInsets.symmetric(vertical: 10),
-        //         child: Text('Week'),
-        //       ),
-        //       true: Padding(
-        //         padding: EdgeInsets.symmetric(vertical: 10),
-        //         child: Text('Month'),
-        //       ),
-        //     },
-        //     onValueChanged: (v) {
-        //       if (v != null) _setMonthView(v);
-        //     },
-        //   ),
-        // ),
-        // Calendar views
         ClipRect(
           child: AnimatedCrossFade(
             duration: _kTransition,
@@ -252,49 +152,31 @@ class _OrgaWeekMonthCalendarState extends State<OrgaWeekMonthCalendar> {
             firstCurve: Curves.easeOutCubic,
             secondCurve: Curves.easeInCubic,
             alignment: Alignment.topCenter,
-            crossFadeState:
-            _monthView ? CrossFadeState.showSecond : CrossFadeState.showFirst,
+            crossFadeState: _controller.monthView
+                ? CrossFadeState.showSecond
+                : CrossFadeState.showFirst,
             firstChild: _WeekStrip(
               today: today,
-              selected: _selected,
-              pageController: _pageController,
-              weekDaysForPage: (i) => _weekDaysForPage(i, loc),
+              selected: _controller.selected,
+              pageController: _controller.weekPageController,
+              weekDaysForPage: (i) => _controller.weekDaysForPage(i, loc),
               onWeekPageChanged: (i) {
-                final week = _weekDaysForPage(i, loc);
-                DateTime match;
-                try {
-                  match = week.firstWhere((d) => d.weekday == _selected.weekday);
-                } catch (_) {
-                  match = week.first;
-                }
-                final day = OrgaCalendarDateUtils.dateOnly(match);
-                if (day == _selected) return;
+                final day = _controller.selectedForWeekPage(i, loc);
+                if (day == _controller.selected) return;
                 _emit(day);
               },
               onDayTap: _emit,
             ),
             secondChild: OrgaMonthCalendar(
-              displayedMonth: _displayedMonth,
-              selected: _selected,
-              monthPageController: _monthPageController,
+              weekCount: _controller.weekCountForDisplayedMonth(),
+              selected: _controller.selected,
+              monthPageController: _controller.monthPageController,
               onSelectDay: (d) {
                 _emit(d);
-                final pickedMonth = DateTime(d.year, d.month);
-                if (pickedMonth != _displayedMonth) {
-                  setState(() => _displayedMonth = pickedMonth);
-                  _syncMonthPage(animate: true);
-                }
+                _controller.syncToSelectedMonth(animate: true);
               },
-              onPageChanged: (i) {
-                final month = _monthForPage(i);
-                setState(() {
-                  _monthPageIndex = i;
-                  _displayedMonth = DateTime(month.year, month.month);
-                });
-              },
-              monthForPage: _monthForPage,
-              onPrevMonth: () => _goToMonth(-1),
-              onNextMonth: () => _goToMonth(1),
+              onPageChanged: _controller.onMonthPageChanged,
+              monthForPage: _controller.monthForPage,
             ),
           ),
         ),
@@ -306,81 +188,29 @@ class _OrgaWeekMonthCalendarState extends State<OrgaWeekMonthCalendar> {
 class OrgaMonthCalendar extends StatelessWidget {
   const OrgaMonthCalendar({
     super.key,
-    required this.displayedMonth,
+    required this.weekCount,
     required this.selected,
     required this.monthPageController,
     required this.onSelectDay,
     required this.onPageChanged,
     required this.monthForPage,
-    required this.onPrevMonth,
-    required this.onNextMonth,
   });
 
-  final DateTime displayedMonth;
+  final int weekCount;
   final DateTime selected;
   final PageController monthPageController;
   final ValueChanged<DateTime> onSelectDay;
   final ValueChanged<int> onPageChanged;
   final DateTime Function(int) monthForPage;
-  final VoidCallback onPrevMonth;
-  final VoidCallback onNextMonth;
-
-  int _weekCountForMonth(DateTime month) {
-    final daysInMonth = DateUtils.getDaysInMonth(month.year, month.month);
-    final firstWeekday = DateTime(month.year, month.month, 1).weekday % 7;
-    final totalCells = firstWeekday + daysInMonth;
-    return (totalCells / 7).ceil();
-  }
 
   @override
   Widget build(BuildContext context) {
-    final active = CupertinoColors.activeBlue.resolveFrom(context);
-    final label = CupertinoColors.label.resolveFrom(context);
     const double gridRowExtent = 35;
-    final weekCount = _weekCountForMonth(displayedMonth);
     final gridHeight = weekCount * gridRowExtent;
 
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(4, 0, 4, 8),
-          child: Row(
-            children: [
-              CupertinoButton(
-                padding: EdgeInsets.zero,
-                minimumSize: Size.zero,
-                onPressed: onPrevMonth,
-                child: Icon(CupertinoIcons.chevron_left, size: 20, color: active),
-              ),
-              Expanded(
-                child: AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 220),
-                  transitionBuilder: (child, animation) {
-                    return FadeTransition(opacity: animation, child: child);
-                  },
-                  child: Text(
-                    '${_monthNames[displayedMonth.month - 1]} ${displayedMonth.year}',
-                    key: ValueKey('${displayedMonth.year}-${displayedMonth.month}'),
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: -0.41,
-                      color: label,
-                    ),
-                  ),
-                ),
-              ),
-              CupertinoButton(
-                padding: EdgeInsets.zero,
-                minimumSize: Size.zero,
-                onPressed: onNextMonth,
-                child: Icon(CupertinoIcons.chevron_right, size: 20, color: active),
-              ),
-            ],
-          ),
-        ),
         AnimatedSize(
           duration: const Duration(milliseconds: 260),
           curve: Curves.easeInOutCubic,

@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import '../../../shared/appbar.dart';
 import '../../../shared/navigationBar.dart';
 import '../home/component/habit_list.dart';
-import '../home/component/weekly_calendar.dart';
 import 'orga_week_month_calendar.dart';
 
 class CalendarScreen extends StatefulWidget {
@@ -18,6 +17,7 @@ class CalendarScreen extends StatefulWidget {
 
 class _CalendarScreenState extends State<CalendarScreen> {
   late DateTime _selected;
+  late DateTime _displayedMonth;
   late ValueNotifier<bool> _monthViewNotifier;
 
 
@@ -26,6 +26,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
     super.initState();
     final now = DateTime.now();
     _selected = DateTime(now.year, now.month, now.day);
+    _displayedMonth = DateTime(_selected.year, _selected.month);
 
     // Initialize the monthViewNotifier based on your default calendarView
     _monthViewNotifier = ValueNotifier(calendarView.value == CalendarView.month);
@@ -41,6 +42,20 @@ class _CalendarScreenState extends State<CalendarScreen> {
     final safeTop = MediaQuery.of(context).padding.top;
     final today = DateTime.now();
     final todayDay = DateTime(today.year, today.month, today.day);
+    const monthNames = [
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
+    ];
 
     // Configuration Constants (large title needs a bit more vertical room)
     final double _appBarHeight = 64.0;
@@ -160,34 +175,42 @@ class _CalendarScreenState extends State<CalendarScreen> {
                                             ),
                                           ),
                                         ),
-                                        Text(
-                                          _selected == todayDay
-                                              ? 'Today'
-                                              : (() {
-                                            final String yearStr =
-                                            _selected.year != today.year ? ', ${_selected.year}' : '';
-                                            final String month = [
-                                              'Jan',
-                                              'Feb',
-                                              'Mar',
-                                              'Apr',
-                                              'May',
-                                              'Jun',
-                                              'Jul',
-                                              'Aug',
-                                              'Sep',
-                                              'Oct',
-                                              'Nov',
-                                              'Dec',
-                                            ][_selected.month - 1];
-                                            return '$month ${_selected.day}$yearStr';
-                                          })(),
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 17,
-                                            letterSpacing: -0.41,
-                                            color: CupertinoColors.label.resolveFrom(context),
-                                          ),
+                                        ValueListenableBuilder<bool>(
+                                          valueListenable: _monthViewNotifier,
+                                          builder: (context, isMonthView, _) {
+                                            final String title = isMonthView
+                                                ? '${monthNames[_displayedMonth.month - 1]} ${_displayedMonth.year}'
+                                                : (_selected == todayDay
+                                                ? 'Today'
+                                                : (() {
+                                              final String yearStr =
+                                              _selected.year != today.year ? ', ${_selected.year}' : '';
+                                              final String month = [
+                                                'Jan',
+                                                'Feb',
+                                                'Mar',
+                                                'Apr',
+                                                'May',
+                                                'Jun',
+                                                'Jul',
+                                                'Aug',
+                                                'Sep',
+                                                'Oct',
+                                                'Nov',
+                                                'Dec',
+                                              ][_selected.month - 1];
+                                              return '$month ${_selected.day}$yearStr';
+                                            })());
+                                            return Text(
+                                              title,
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 17,
+                                                letterSpacing: -0.41,
+                                                color: CupertinoColors.label.resolveFrom(context),
+                                              ),
+                                            );
+                                          },
                                         ),
                                         Container(
                                           width: 100,
@@ -253,9 +276,15 @@ class _CalendarScreenState extends State<CalendarScreen> {
                                         child: OrgaWeekMonthCalendar(
                                           monthViewNotifier: _monthViewNotifier,
                                           selected: _selected,
+                                          onDisplayedMonthChanged: (month) {
+                                            setState(() {
+                                              _displayedMonth = DateTime(month.year, month.month);
+                                            });
+                                          },
                                           onDateChanged: (date) {
                                             setState(() {
                                               _selected = date;
+                                              _displayedMonth = DateTime(date.year, date.month);
                                             });
                                           },
                                         ),
