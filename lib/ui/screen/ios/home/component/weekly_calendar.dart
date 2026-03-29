@@ -184,33 +184,30 @@ class InfiniteWeeklyCalendar extends StatelessWidget {
     );
   }
 
-  Widget _buildDayCard(
-      BuildContext context,
-      DateTime date,
-      bool isToday, {
-        double completion = 0.75,
-      }) {
+  Widget _buildDayCard(BuildContext context, DateTime date, bool isToday) {
+    const labels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    final label = labels[date.weekday % 7];
     final active = CupertinoColors.activeBlue.resolveFrom(context);
     final labelColor = CupertinoColors.label.resolveFrom(context);
+    final tertiary = CupertinoColors.tertiaryLabel.resolveFrom(context);
 
-    return SizedBox(
+    return Container(
       width: 35,
       height: 35,
-      child: CustomPaint(
-        painter: _DayProgressPainter(
-          progress: completion,
-          color: active,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        border: Border.all(
+          color: const Color(0xFF3C3C43).withValues(alpha: 0.12),
+          width: 1,
         ),
-        child: Container(
-          margin: const EdgeInsets.all(3),
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: isToday
-                ? active.withValues(alpha: 0.05)
-                : CupertinoColors.systemBackground.resolveFrom(context),
-          ),
-          alignment: Alignment.center,
-          child: Text(
+        color: isToday
+            ? active.withValues(alpha: 0.05)
+            : CupertinoColors.systemBackground.resolveFrom(context),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
             date.day.toString(),
             style: TextStyle(
               fontSize: 13,
@@ -219,60 +216,8 @@ class InfiniteWeeklyCalendar extends StatelessWidget {
               color: isToday ? active : labelColor,
             ),
           ),
-        ),
+        ],
       ),
     );
   }
-
-}
-
-
-
-class _DayProgressPainter extends CustomPainter {
-  final double progress;
-  final Color color;
-
-  _DayProgressPainter({
-    required this.progress,
-    required this.color,
-  });
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final strokeWidth = 2.5;
-
-    final rect = Offset.zero & size;
-
-    final backgroundPaint = Paint()
-      ..color = const Color(0xFF3C3C43).withValues(alpha: 0.12)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = strokeWidth;
-
-    final progressPaint = Paint()
-      ..color = color
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = strokeWidth
-      ..strokeCap = StrokeCap.round;
-
-    // background track
-    canvas.drawArc(
-      rect.deflate(1),
-      0,
-      2 * 3.1416,
-      false,
-      backgroundPaint,
-    );
-
-    // progress arc
-    canvas.drawArc(
-      rect.deflate(1),
-      -3.1416 / 2,
-      2 * 3.1416 * progress,
-      false,
-      progressPaint,
-    );
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
 }
